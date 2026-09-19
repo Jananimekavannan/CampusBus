@@ -109,11 +109,13 @@ function Login({ onLogin, timeMode, setTimeMode }) {
 
       {/* Center Hero: Login Card with Integrated Clean Fitted Logo */}
       <div className="login-center-wrapper">
+        <div className="login-card-glow-aura" />
         <div className="login-card">
           <div className="login-header-logo-badge">
+            <div className="login-logo-glow-ring" />
             <img src={kitLogo} alt="KIT Coimbatore Logo" className="login-kit-logo-img" />
           </div>
-          <span className="institution-tag">KIT COIMBATORE</span>
+          <span className="institution-tag">KIT COIMBATORE • AUTONOMOUS</span>
           <h1>KITBusMiss Portal</h1>
           <p className="subtitle">
             Real-Time Campus Fleet Intelligence & GPS Tracking
@@ -209,6 +211,34 @@ function Login({ onLogin, timeMode, setTimeMode }) {
               )}
             </button>
           </form>
+
+          {/* Quick Demo Credentials Switcher */}
+          <div className="login-quick-presets-box">
+            <span className="quick-presets-label">⚡ Quick Role Presets:</span>
+            <div className="quick-presets-pills">
+              <button
+                type="button"
+                className={`preset-pill ${activeRole === "student" ? "active" : ""}`}
+                onClick={() => handleRoleSelect("student")}
+              >
+                🎓 Student
+              </button>
+              <button
+                type="button"
+                className={`preset-pill ${activeRole === "driver" ? "active" : ""}`}
+                onClick={() => handleRoleSelect("driver")}
+              >
+                🚌 Driver
+              </button>
+              <button
+                type="button"
+                className={`preset-pill ${activeRole === "admin" ? "active" : ""}`}
+                onClick={() => handleRoleSelect("admin")}
+              >
+                🛡️ Admin
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

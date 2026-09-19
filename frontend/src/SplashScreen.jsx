@@ -3,14 +3,24 @@ import kitLogo from "./assets/kit-logo.png";
 
 /**
  * KITBusMiss Cinematic Splash Loader Screen:
- * - Sunny Blue Sky with drifting puffy clouds & horizon landscape
- * - Clean animated KIT college bus driving on road from Left to Right
- * - Centered KIT Coimbatore logo & KITBusMiss title
- * - Clean "Loading..." progress indicator
- * - No skip button
+ * - Sunny Blue Sky with drifting puffy clouds, hot air balloon, and rotating sun rays
+ * - Layered landscape with distant hills and lush Coimbatore campus greenery
+ * - Realistic animated KIT bus driving left-to-right with suspension bounce & exhaust smoke puffs
+ * - Glowing circular branding card with revolving ring
+ * - Dynamic transit telemetry status updates
  */
 export default function SplashScreen({ onFinish }) {
   const [progress, setProgress] = useState(0);
+
+  // Dynamic status messages based on loading progress
+  const getStatusText = (p) => {
+    if (p < 20) return "🛰️ Initializing GPS Dual-Band Satellites...";
+    if (p < 40) return "🗺️ Loading Coimbatore Transit Corridor Stops...";
+    if (p < 65) return "🚍 Connecting to Active KIT Fleet Radar...";
+    if (p < 85) return "⚡ Synchronizing Real-Time Telemetry Feed...";
+    if (p < 98) return "🛡️ Authenticating Central Command Portal...";
+    return "✓ Campus Fleet Ready! Launching Portal...";
+  };
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -29,9 +39,20 @@ export default function SplashScreen({ onFinish }) {
 
   return (
     <div className="splash-screen">
-      {/* 1. Sunny Blue Sky with Animated Clouds & Distant Green Landscape */}
+      {/* 1. Sunny Blue Sky with Animated Clouds, Sunrays & Birds */}
       <div className="splash-sky">
-        <div className="splash-sun" />
+        <div className="splash-sun">
+          <div className="sun-rotating-rays" />
+        </div>
+
+        {/* Hot Air Balloon drifting in sky */}
+        <div className="splash-balloon" />
+
+        {/* Birds flying across sky */}
+        <div className="bird bird-1" />
+        <div className="bird bird-2" />
+        <div className="bird bird-3" />
+
         {/* Floating Animated Clouds */}
         <div className="cloud cloud-1" />
         <div className="cloud cloud-2" />
@@ -39,20 +60,23 @@ export default function SplashScreen({ onFinish }) {
         <div className="cloud cloud-4" />
         <div className="cloud cloud-5" />
 
-        {/* Distant Hills / Trees Silhouette */}
-        <div className="splash-horizon-landscape" />
+        {/* Distant Hills / Trees Landscape Layers */}
+        <div className="splash-hills-back" />
+        <div className="splash-hills-front" />
       </div>
 
       {/* 2. Centered Branding: KIT Logo & KITBusMiss */}
       <div className="splash-center-content">
         <div className="splash-logo-wrap">
           <div className="splash-logo-halo" />
-          <div className="splash-logo-ring" />
+          <div className="splash-logo-ring-rotating" />
           <img src={kitLogo} alt="KIT Coimbatore Logo" className="splash-logo-img" />
         </div>
 
         <div className="splash-text-group">
-          <span className="splash-institution-tag">KALAIGNAR KARUNANIDHI INSTITUTE OF TECHNOLOGY</span>
+          <span className="splash-institution-tag">
+            KALAIGNAR KARUNANIDHI INSTITUTE OF TECHNOLOGY
+          </span>
           <h1 className="splash-title">
             KIT<span>BusMiss</span>
           </h1>
@@ -61,16 +85,18 @@ export default function SplashScreen({ onFinish }) {
           </p>
         </div>
 
-        {/* 3. Clean Loading Progress Indicator */}
+        {/* 3. Dynamic Loading Progress Indicator */}
         <div className="splash-loading-box">
           <div className="splash-progress-track">
             <div
               className="splash-progress-bar"
               style={{ width: `${progress}%` }}
-            />
+            >
+              <div className="splash-progress-glow-tip" />
+            </div>
           </div>
           <div className="splash-loading-status">
-            <span>Loading...</span>
+            <span className="splash-status-phrase">{getStatusText(progress)}</span>
             <b>{progress}%</b>
           </div>
         </div>
@@ -89,11 +115,18 @@ export default function SplashScreen({ onFinish }) {
         <div
           className="splash-bus-traveler"
           style={{
-            left: `calc(${progress}% * 1.15 - 120px)`,
+            left: `calc(${progress}% * 1.15 - 130px)`,
           }}
         >
+          {/* Animated Exhaust Smoke Puffs */}
+          <div className="exhaust-smoke-container">
+            <span className="smoke-puff puff-1" />
+            <span className="smoke-puff puff-2" />
+            <span className="smoke-puff puff-3" />
+          </div>
+
           {/* Detailed SVG Side-View KIT Bus */}
-          <div className="kit-bus-svg-wrapper">
+          <div className="kit-bus-svg-wrapper bus-bouncing-chassis">
             <svg
               viewBox="0 0 280 120"
               className="kit-bus-svg"
@@ -136,12 +169,29 @@ export default function SplashScreen({ onFinish }) {
 
               {/* Destination Header Banner */}
               <rect x="190" y="24" width="55" height="14" rx="3" fill="#0F172A" />
-              <text x="217" y="34" fill="#38BDF8" fontSize="8" fontWeight="bold" textAnchor="middle" fontFamily="sans-serif">
+              <text
+                x="217"
+                y="34"
+                fill="#38BDF8"
+                fontSize="8"
+                fontWeight="bold"
+                textAnchor="middle"
+                fontFamily="sans-serif"
+              >
                 KIT CAMPUS
               </text>
 
               {/* Side Banner "KIT COIMBATORE" */}
-              <text x="125" y="80" fill="#FFFFFF" fontSize="9.5" fontWeight="900" letterSpacing="1" textAnchor="middle" fontFamily="sans-serif">
+              <text
+                x="125"
+                y="80"
+                fill="#FFFFFF"
+                fontSize="9.5"
+                fontWeight="900"
+                letterSpacing="1"
+                textAnchor="middle"
+                fontFamily="sans-serif"
+              >
                 KIT COIMBATORE • CAMPUS TRANSIT
               </text>
 
@@ -154,22 +204,98 @@ export default function SplashScreen({ onFinish }) {
                 strokeWidth="2"
               />
               {/* Passenger Windows */}
-              <rect x="168" y="38" width="36" height="26" rx="3" fill="#0F172A" stroke="#334155" strokeWidth="2" />
-              <rect x="126" y="38" width="36" height="26" rx="3" fill="#0F172A" stroke="#334155" strokeWidth="2" />
-              <rect x="84" y="38" width="36" height="26" rx="3" fill="#0F172A" stroke="#334155" strokeWidth="2" />
-              <rect x="42" y="38" width="36" height="26" rx="3" fill="#0F172A" stroke="#334155" strokeWidth="2" />
-              <rect x="22" y="38" width="16" height="26" rx="3" fill="#0F172A" stroke="#334155" strokeWidth="2" />
+              <rect
+                x="168"
+                y="38"
+                width="36"
+                height="26"
+                rx="3"
+                fill="#0F172A"
+                stroke="#334155"
+                strokeWidth="2"
+              />
+              <rect
+                x="126"
+                y="38"
+                width="36"
+                height="26"
+                rx="3"
+                fill="#0F172A"
+                stroke="#334155"
+                strokeWidth="2"
+              />
+              <rect
+                x="84"
+                y="38"
+                width="36"
+                height="26"
+                rx="3"
+                fill="#0F172A"
+                stroke="#334155"
+                strokeWidth="2"
+              />
+              <rect
+                x="42"
+                y="38"
+                width="36"
+                height="26"
+                rx="3"
+                fill="#0F172A"
+                stroke="#334155"
+                strokeWidth="2"
+              />
+              <rect
+                x="22"
+                y="38"
+                width="16"
+                height="26"
+                rx="3"
+                fill="#0F172A"
+                stroke="#334155"
+                strokeWidth="2"
+              />
 
               {/* Window Glare reflections */}
-              <line x1="48" y1="42" x2="68" y2="60" stroke="rgba(255,255,255,0.4)" strokeWidth="2" />
-              <line x1="90" y1="42" x2="110" y2="60" stroke="rgba(255,255,255,0.4)" strokeWidth="2" />
-              <line x1="132" y1="42" x2="152" y2="60" stroke="rgba(255,255,255,0.4)" strokeWidth="2" />
-              <line x1="174" y1="42" x2="194" y2="60" stroke="rgba(255,255,255,0.4)" strokeWidth="2" />
+              <line
+                x1="48"
+                y1="42"
+                x2="68"
+                y2="60"
+                stroke="rgba(255,255,255,0.4)"
+                strokeWidth="2"
+              />
+              <line
+                x1="90"
+                y1="42"
+                x2="110"
+                y2="60"
+                stroke="rgba(255,255,255,0.4)"
+                strokeWidth="2"
+              />
+              <line
+                x1="132"
+                y1="42"
+                x2="152"
+                y2="60"
+                stroke="rgba(255,255,255,0.4)"
+                strokeWidth="2"
+              />
+              <line
+                x1="174"
+                y1="42"
+                x2="194"
+                y2="60"
+                stroke="rgba(255,255,255,0.4)"
+                strokeWidth="2"
+              />
 
               {/* Front Headlight (Right Side) */}
               <path d="M 252 74 L 257 76 L 257 84 L 252 86 Z" fill="#FEF08A" />
               {/* Headlight Glow */}
-              <polygon points="257,75 285,65 285,95 257,85" fill="rgba(254, 240, 138, 0.45)" />
+              <polygon
+                points="257,75 285,65 285,95 257,85"
+                fill="rgba(254, 240, 138, 0.45)"
+              />
 
               {/* Rear Taillight (Left Side) */}
               <rect x="13" y="74" width="4" height="12" rx="2" fill="#EF4444" />
@@ -179,8 +305,18 @@ export default function SplashScreen({ onFinish }) {
               <circle cx="205" cy="95" r="19" fill="#1E293B" />
 
               {/* Back Wheel */}
-              <g className="bus-spinning-wheel" style={{ transformOrigin: "68px 95px" }}>
-                <circle cx="68" cy="95" r="16" fill="#0F172A" stroke="#475569" strokeWidth="3" />
+              <g
+                className="bus-spinning-wheel"
+                style={{ transformOrigin: "68px 95px" }}
+              >
+                <circle
+                  cx="68"
+                  cy="95"
+                  r="16"
+                  fill="#0F172A"
+                  stroke="#475569"
+                  strokeWidth="3"
+                />
                 <circle cx="68" cy="95" r="7" fill="#E2E8F0" />
                 <circle cx="68" cy="95" r="3" fill="#1E293B" />
                 <line x1="68" y1="82" x2="68" y2="108" stroke="#94A3B8" strokeWidth="2" />
@@ -188,12 +324,36 @@ export default function SplashScreen({ onFinish }) {
               </g>
 
               {/* Front Wheel */}
-              <g className="bus-spinning-wheel" style={{ transformOrigin: "205px 95px" }}>
-                <circle cx="205" cy="95" r="16" fill="#0F172A" stroke="#475569" strokeWidth="3" />
+              <g
+                className="bus-spinning-wheel"
+                style={{ transformOrigin: "205px 95px" }}
+              >
+                <circle
+                  cx="205"
+                  cy="95"
+                  r="16"
+                  fill="#0F172A"
+                  stroke="#475569"
+                  strokeWidth="3"
+                />
                 <circle cx="205" cy="95" r="7" fill="#E2E8F0" />
                 <circle cx="205" cy="95" r="3" fill="#1E293B" />
-                <line x1="205" y1="82" x2="205" y2="108" stroke="#94A3B8" strokeWidth="2" />
-                <line x1="192" y1="95" x2="218" y2="95" stroke="#94A3B8" strokeWidth="2" />
+                <line
+                  x1="205"
+                  y1="82"
+                  x2="205"
+                  y2="108"
+                  stroke="#94A3B8"
+                  strokeWidth="2"
+                />
+                <line
+                  x1="192"
+                  y1="95"
+                  x2="218"
+                  y2="95"
+                  stroke="#94A3B8"
+                  strokeWidth="2"
+                />
               </g>
 
               {/* Door & Handles */}

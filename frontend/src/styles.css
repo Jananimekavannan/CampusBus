@@ -57,6 +57,7 @@ body {
 }
 
 /* =========================================================
+/* =========================================================
    1. SPLASH SCREEN (KITBusMiss INTRO LOADER)
    ========================================================= */
 
@@ -94,9 +95,105 @@ body {
   animation: sunPulse 4s infinite alternate ease-in-out;
 }
 
+.sun-rotating-rays {
+  position: absolute;
+  inset: -25px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    rgba(250, 204, 21, 0.4) 0deg 20deg,
+    transparent 20deg 40deg,
+    rgba(250, 204, 21, 0.4) 40deg 60deg,
+    transparent 60deg 80deg,
+    rgba(250, 204, 21, 0.4) 80deg 100deg,
+    transparent 100deg 120deg,
+    rgba(250, 204, 21, 0.4) 120deg 140deg,
+    transparent 140deg 160deg,
+    rgba(250, 204, 21, 0.4) 160deg 180deg,
+    transparent 180deg 200deg,
+    rgba(250, 204, 21, 0.4) 200deg 220deg,
+    transparent 220deg 240deg,
+    rgba(250, 204, 21, 0.4) 240deg 260deg,
+    transparent 260deg 280deg,
+    rgba(250, 204, 21, 0.4) 280deg 300deg,
+    transparent 300deg 320deg,
+    rgba(250, 204, 21, 0.4) 320deg 340deg,
+    transparent 340deg 360deg
+  );
+  animation: rotateSunRays 22s linear infinite;
+}
+
+@keyframes rotateSunRays {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 @keyframes sunPulse {
   0% { transform: scale(0.92); opacity: 0.85; }
   100% { transform: scale(1.1); opacity: 1; }
+}
+
+/* Floating Hot Air Balloon */
+.splash-balloon {
+  position: absolute;
+  top: 75px;
+  left: 14%;
+  width: 36px;
+  height: 46px;
+  background: linear-gradient(135deg, #ef4444 0%, #f59e0b 50%, #3b82f6 100%);
+  border-radius: 50% 50% 45% 45%;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  animation: floatBalloon 16s ease-in-out infinite alternate;
+}
+
+.splash-balloon::after {
+  content: "";
+  position: absolute;
+  bottom: -8px;
+  left: 13px;
+  width: 10px;
+  height: 6px;
+  background: #78350f;
+  border-radius: 2px;
+}
+
+@keyframes floatBalloon {
+  0% { transform: translate(0, 0) rotate(-3deg); }
+  100% { transform: translate(40px, -25px) rotate(3deg); }
+}
+
+/* Flying Birds */
+.bird {
+  position: absolute;
+  width: 16px;
+  height: 9px;
+  border-top: 2px solid #1e293b;
+  border-left: 2px solid #1e293b;
+  border-radius: 50% 0 0 0;
+  transform: rotate(45deg);
+  animation: flyBird 24s linear infinite;
+}
+
+.bird::after {
+  content: "";
+  position: absolute;
+  top: -9px;
+  left: -1px;
+  width: 16px;
+  height: 9px;
+  border-top: 2px solid #1e293b;
+  border-right: 2px solid #1e293b;
+  border-radius: 0 50% 0 0;
+  transform: rotate(-90deg);
+}
+
+.bird-1 { top: 90px; left: -50px; animation-duration: 20s; animation-delay: 0s; }
+.bird-2 { top: 120px; left: -80px; animation-duration: 24s; animation-delay: 6s; }
+.bird-3 { top: 140px; left: -60px; animation-duration: 22s; animation-delay: 12s; }
+
+@keyframes flyBird {
+  0% { transform: translateX(0) scale(0.85); }
+  100% { transform: translateX(calc(100vw + 120px)) scale(0.85); }
 }
 
 /* Puffy Drifting Clouds */
@@ -225,6 +322,27 @@ body {
   100% { transform: translateX(calc(100vw + 300px)); }
 }
 
+/* Distant Hills / Greenery Landscape */
+.splash-hills-back {
+  position: absolute;
+  bottom: 95px;
+  left: 0;
+  right: 0;
+  height: 110px;
+  background: radial-gradient(ellipse 120% 100% at 50% 100%, #15803d 0%, #166534 60%, transparent 100%);
+  opacity: 0.85;
+}
+
+.splash-hills-front {
+  position: absolute;
+  bottom: 85px;
+  left: -10%;
+  right: -10%;
+  height: 90px;
+  background: radial-gradient(ellipse 110% 90% at 40% 100%, #22c55e 0%, #15803d 80%, transparent 100%);
+  opacity: 0.95;
+}
+
 /* Splash Center Content */
 .splash-center-content {
   position: relative;
@@ -234,12 +352,12 @@ body {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(16px);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(18px);
   padding: 32px 46px 28px;
   border-radius: 28px;
   border: 1px solid rgba(255, 255, 255, 0.95);
-  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.15);
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.16), 0 0 30px rgba(37, 99, 235, 0.1);
   max-width: 520px;
   width: 90%;
 }
@@ -251,6 +369,19 @@ body {
   display: grid;
   place-items: center;
   margin-bottom: 12px;
+}
+
+.splash-logo-ring-rotating {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 2px dashed #c01823;
+  animation: spinRing 14s linear infinite;
+}
+
+@keyframes spinRing {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 .splash-logo-img {
@@ -303,6 +434,7 @@ body {
   background: rgba(15, 23, 42, 0.1);
   border-radius: 10px;
   overflow: hidden;
+  position: relative;
 }
 
 .splash-progress-bar {
@@ -310,15 +442,37 @@ body {
   background: linear-gradient(90deg, #c01823, #f59e0b, #2563eb);
   border-radius: 10px;
   transition: width 0.1s linear;
+  position: relative;
+}
+
+.splash-progress-glow-tip {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 8px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 10px #ffffff, 0 0 16px #f59e0b;
 }
 
 .splash-loading-status {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin-top: 10px;
   font-size: 12px;
   font-weight: 700;
   color: #334155;
+}
+
+.splash-status-phrase {
+  font-size: 11.5px;
+  color: #2563eb;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 280px;
 }
 
 /* Road at the bottom */
@@ -381,9 +535,42 @@ body {
   z-index: 20;
 }
 
+/* Exhaust smoke puffs */
+.exhaust-smoke-container {
+  position: absolute;
+  bottom: 14px;
+  left: 6px;
+  pointer-events: none;
+}
+
+.smoke-puff {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.65);
+  animation: smokeDrift 1.2s ease-out infinite;
+}
+
+.puff-1 { width: 10px; height: 10px; bottom: 0; left: 0; animation-delay: 0s; }
+.puff-2 { width: 14px; height: 14px; bottom: 4px; left: -8px; animation-delay: 0.4s; }
+.puff-3 { width: 18px; height: 18px; bottom: 8px; left: -18px; animation-delay: 0.8s; }
+
+@keyframes smokeDrift {
+  0% { transform: scale(0.4) translate(0, 0); opacity: 0.8; }
+  100% { transform: scale(1.6) translate(-28px, -16px); opacity: 0; }
+}
+
 .kit-bus-svg-wrapper {
   width: 240px;
   height: 100px;
+}
+
+.bus-bouncing-chassis {
+  animation: busBounce 0.35s ease-in-out infinite alternate;
+}
+
+@keyframes busBounce {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-2.5px); }
 }
 
 .kit-bus-svg {
@@ -420,8 +607,157 @@ body {
   background: radial-gradient(circle at center, #f0fdf4 0%, #e2e8f0 100%);
 }
 
+.login-center-wrapper {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-card-glow-aura {
+  position: absolute;
+  inset: -14px;
+  border-radius: 34px;
+  background: linear-gradient(135deg, rgba(192, 24, 35, 0.3), rgba(37, 99, 235, 0.3), rgba(245, 158, 11, 0.3));
+  filter: blur(28px);
+  z-index: -1;
+  animation: glowAuraPulse 6s ease-in-out infinite alternate;
+}
+
+@keyframes glowAuraPulse {
+  0% { opacity: 0.4; transform: scale(0.98); }
+  100% { opacity: 0.85; transform: scale(1.03); }
+}
+
+.login-card {
+  position: relative;
+  background: rgba(15, 23, 42, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 28px;
+  padding: 34px 38px 28px;
+  width: 440px;
+  max-width: 90vw;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), 0 0 30px rgba(37, 99, 235, 0.15);
+  text-align: center;
+  z-index: 10;
+  animation: cardFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes cardFadeIn {
+  from { opacity: 0; transform: translateY(14px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.login-header-logo-badge {
+  position: relative;
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2.5px solid #c01823;
+  padding: 3px;
+  margin: 0 auto 12px;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 8px 22px rgba(192, 24, 35, 0.4);
+}
+
+.login-logo-glow-ring {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 1.5px dashed rgba(37, 99, 235, 0.5);
+  animation: spinRing 12s linear infinite;
+}
+
+.login-kit-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 50%;
+}
+
+.login-quick-presets-box {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.quick-presets-label {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  color: var(--text-muted);
+}
+
+.quick-presets-pills {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.preset-pill {
+  padding: 6px 14px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: var(--text-main);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.preset-pill:hover {
+  background: rgba(37, 99, 235, 0.22);
+  border-color: #60a5fa;
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.preset-pill.active {
+  background: var(--kit-blue-accent, #2563eb);
+  border-color: #60a5fa;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+}
+
+.submit-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.submit-btn::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    60deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.22) 50%,
+    transparent 70%
+  );
+  transform: rotate(25deg);
+  animation: btnShineSweep 3s infinite;
+}
+
+@keyframes btnShineSweep {
+  0% { transform: translateX(-100%) rotate(25deg); }
+  100% { transform: translateX(100%) rotate(25deg); }
+}
+
 .login-page.day .login-card {
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.94);
   color: #0f172a;
   border-color: rgba(0, 0, 0, 0.1);
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.15);
@@ -437,6 +773,18 @@ body {
   background: #f8fafc;
   color: #0f172a;
   border-color: #cbd5e1;
+}
+
+.login-page.day .preset-pill {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #334155;
+}
+
+.login-page.day .preset-pill.active {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #ffffff;
 }
 
 .revolving-road-canvas {
@@ -478,7 +826,7 @@ body {
 
 .theme-pill-btn.active {
   background: #c01823;
-  color: #fff;
+  color: #ffffff;
   box-shadow: 0 0 12px rgba(192, 24, 35, 0.5);
 }
 
