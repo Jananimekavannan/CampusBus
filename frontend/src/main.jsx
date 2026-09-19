@@ -4,7 +4,8 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import { io } from "socket.io-client";
 import axios from "axios";
-import AerialCampusMap from "./AerialCampusMap";
+import SplashScreen from "./SplashScreen";
+import RevolvingBusRoad from "./RevolvingBusRoad";
 import kitLogo from "./assets/kit-logo.png";
 import "./styles.css";
 import "leaflet/dist/leaflet.css";
@@ -26,13 +27,45 @@ function MapFly({ pos }) {
   return null;
 }
 
+const ROLE_PRESETS = {
+  student: {
+    name: "Student",
+    icon: "🎓",
+    email: "student@campusbus.local",
+    pass: "Student123!",
+    badge: "Student Portal • Live GPS Tracking",
+  },
+  driver: {
+    name: "Driver",
+    icon: "🚌",
+    email: "driver@campusbus.local",
+    pass: "Driver123!",
+    badge: "Driver Handset • GPS Broadcast",
+  },
+  admin: {
+    name: "Admin",
+    icon: "🛡️",
+    email: "admin@campusbus.local",
+    pass: "Admin123!",
+    badge: "Transport Admin • Fleet Control",
+  },
+};
+
 function Login({ onLogin }) {
+  const [activeRole, setActiveRole] = useState("student");
   const [email, setEmail] = useState("student@campusbus.local");
   const [password, setPassword] = useState("Student123!");
   const [showPassword, setShowPassword] = useState(false);
   const [err, setErr] = useState("");
   const [loading, setLoading] = useState(false);
-  const [timeMode, setTimeMode] = useState("day");
+  const [timeMode, setTimeMode] = useState("night");
+
+  const handleRoleSelect = (roleKey) => {
+    setActiveRole(roleKey);
+    setEmail(ROLE_PRESETS[roleKey].email);
+    setPassword(ROLE_PRESETS[roleKey].pass);
+    setErr("");
+  };
 
   async function submit(e) {
     e.preventDefault();
@@ -44,7 +77,7 @@ function Login({ onLogin }) {
     } catch (error) {
       setErr(
         error.response?.data?.message ||
-          "Cannot connect to KIT backend server. Please check backend."
+          "Cannot connect to KIT backend server. Please verify backend."
       );
     } finally {
       setLoading(false);
@@ -53,10 +86,10 @@ function Login({ onLogin }) {
 
   return (
     <div className={`login-page ${timeMode}`}>
-      {/* 1. Animated Aerial Campus & Streets Background */}
-      <AerialCampusMap timeMode={timeMode} />
+      {/* 1. Revolving Road & Revolving KIT Bus encircling the login box */}
+      <RevolvingBusRoad timeMode={timeMode} />
 
-      {/* 2. Top Bar Controls: Day & Night only */}
+      {/* 2. Top Bar: Day / Night Switcher */}
       <div className="login-topbar">
         <div className="theme-pill-group">
           <button
@@ -78,9 +111,9 @@ function Login({ onLogin }) {
         </div>
       </div>
 
-      {/* 3. Center Hero: Centered KIT Coimbatore Logo & Login Card */}
+      {/* 3. Center Hero: Centered KIT Logo & Login Card */}
       <div className="login-center-wrapper">
-        {/* Centered KIT Coimbatore Logo with Glowing Halo */}
+        {/* Centered Circular KIT Coimbatore Logo */}
         <div className="kit-logo-center-badge">
           <div className="kit-logo-halo" />
           <div className="kit-logo-spin-ring" />
@@ -89,18 +122,46 @@ function Login({ onLogin }) {
           </div>
         </div>
 
-        {/* Glassmorphic Login Card */}
+        {/* Clean Glassmorphic Login Card */}
         <div className="login-card">
           <span className="institution-tag">KIT COIMBATORE</span>
-          <h1>CampusBus Portal</h1>
+          <h1>KITBusMiss Portal</h1>
           <p className="subtitle">
-            Real-Time GPS Fleet Intelligence & Student Transit Tracking
+            Real-Time Campus Fleet Intelligence & GPS Tracking
           </p>
+
+          {/* Role Switcher Tabs (Student, Driver, Admin) */}
+          <div className="role-tabs-segmented">
+            <button
+              type="button"
+              className={`role-tab-btn ${activeRole === "student" ? "active" : ""}`}
+              onClick={() => handleRoleSelect("student")}
+            >
+              <span className="role-tab-icon">🎓</span>
+              <span>Student</span>
+            </button>
+            <button
+              type="button"
+              className={`role-tab-btn ${activeRole === "driver" ? "active" : ""}`}
+              onClick={() => handleRoleSelect("driver")}
+            >
+              <span className="role-tab-icon">🚌</span>
+              <span>Driver</span>
+            </button>
+            <button
+              type="button"
+              className={`role-tab-btn ${activeRole === "admin" ? "active" : ""}`}
+              onClick={() => handleRoleSelect("admin")}
+            >
+              <span className="role-tab-icon">🛡️</span>
+              <span>Admin</span>
+            </button>
+          </div>
 
           <form className="login-form" onSubmit={submit}>
             <div className="input-field-group">
               <label htmlFor="emailInput">
-                <span>📧</span> Institutional Email
+                <span>📧</span> {ROLE_PRESETS[activeRole].name} Email
               </label>
               <div className="input-with-icon">
                 <input
@@ -116,7 +177,7 @@ function Login({ onLogin }) {
 
             <div className="input-field-group">
               <label htmlFor="passwordInput">
-                <span>🔒</span> Access Password
+                <span>🔒</span> Password
               </label>
               <div className="input-with-icon">
                 <input
@@ -153,7 +214,7 @@ function Login({ onLogin }) {
                 </>
               ) : (
                 <>
-                  <span>Sign In to Transit Portal</span>
+                  <span>Sign In as {ROLE_PRESETS[activeRole].name}</span>
                   <span>➔</span>
                 </>
               )}
@@ -166,6 +227,7 @@ function Login({ onLogin }) {
 }
 
 function App() {
+  const [showSplash, setShowSplash] = useState(true);
   const [sess, setSess] = useState(() =>
     JSON.parse(localStorage.getItem("campusbus_session") || "null")
   );
@@ -179,6 +241,11 @@ function App() {
     localStorage.removeItem("campusbus_session");
     setSess(null);
   };
+
+  // Show animated KITBusMiss splash loader on initial load
+  if (showSplash && !sess) {
+    return <SplashScreen onFinish={() => setShowSplash(false)} />;
+  }
 
   if (!sess) return <Login onLogin={login} />;
   return <Dashboard sess={sess} logout={logout} />;
@@ -255,7 +322,7 @@ function Dashboard({ sess, logout }) {
             <img src={kitLogo} alt="KIT Logo" />
           </div>
           <div className="brand-text">
-            <h2>KIT CampusBus</h2>
+            <h2>KITBusMiss</h2>
             <p>COIMBATORE</p>
           </div>
         </div>
