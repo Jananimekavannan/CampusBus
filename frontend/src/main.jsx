@@ -6,6 +6,9 @@ import SplashScreen from "./SplashScreen";
 import RevolvingBusRoad from "./RevolvingBusRoad";
 import CoimbatoreTransitMap from "./CoimbatoreTransitMap";
 import StudentTelemetryWidget from "./StudentTelemetryWidget";
+import RoutesExplorerView from "./RoutesExplorerView";
+import TransitAdvisoryView from "./TransitAdvisoryView";
+import BusScheduleView from "./BusScheduleView";
 import SosModal from "./SosModal";
 import kitLogo from "./assets/kit-logo.png";
 import "./styles.css";
@@ -261,8 +264,7 @@ function Dashboard({ sess, logout, timeMode, setTimeMode }) {
   const [notice, setNotice] = useState("");
   const [selectedStop, setSelectedStop] = useState(null);
   const [isSosOpen, setIsSosOpen] = useState(false);
-  const [announcements, setAnnouncements] = useState([]);
-  const [activeTab, setActiveTab] = useState("tracking"); // 'tracking', 'routes', 'announcements', 'admin'
+  const [activeTab, setActiveTab] = useState("tracking"); // 'tracking', 'routes', 'announcements', 'schedule', 'admin'
 
   const headers = useMemo(
     () => ({ Authorization: "Bearer " + sess.token }),
@@ -285,11 +287,6 @@ function Dashboard({ sess, logout, timeMode, setTimeMode }) {
         }
       })
       .catch(() => setNotice("Backend connection unavailable."));
-
-    axios
-      .get(`${API}/api/announcements`, { headers })
-      .then((r) => setAnnouncements(r.data))
-      .catch(() => {});
 
     return () => socket.disconnect();
   }, [headers, selected, socket]);
@@ -318,6 +315,11 @@ function Dashboard({ sess, logout, timeMode, setTimeMode }) {
     }
   };
 
+  const handleTrackBusFromOtherView = (busId) => {
+    handleBusSwitch(busId);
+    setActiveTab("tracking");
+  };
+
   const startTrip = async () => {
     try {
       await axios.post(`${API}/api/trips/start`, {}, { headers });
@@ -338,7 +340,7 @@ function Dashboard({ sess, logout, timeMode, setTimeMode }) {
 
   return (
     <div className={`app-container ${timeMode}`}>
-      {/* Sidebar Navigation */}
+      {/* Left Sidebar Navigation */}
       <aside className="sidebar-nav">
         {/* Perfectly Fitted Official KIT Coimbatore Logo */}
         <div className="sidebar-brand-box">
@@ -369,7 +371,7 @@ function Dashboard({ sess, logout, timeMode, setTimeMode }) {
           </div>
         </div>
 
-        {/* Nav Links */}
+        {/* Sidebar Nav Links with Live Switching */}
         <nav className="nav-menu">
           <button
             className={`nav-item ${activeTab === "tracking" ? "active" : ""}`}
@@ -391,6 +393,13 @@ function Dashboard({ sess, logout, timeMode, setTimeMode }) {
           >
             <span className="nav-icon">📢</span>
             <span>Transit Advisory</span>
+          </button>
+          <button
+            className={`nav-item ${activeTab === "schedule" ? "active" : ""}`}
+            onClick={() => setActiveTab("schedule")}
+          >
+            <span className="nav-icon">⏰</span>
+            <span>Bus Timetable</span>
           </button>
           {sess.user.role === "admin" && (
             <button
@@ -420,7 +429,7 @@ function Dashboard({ sess, logout, timeMode, setTimeMode }) {
         </button>
       </aside>
 
-      {/* Main Content Area */}
+      {/* Main Content Scrollable Workspace */}
       <main className="main-content-scroll">
         {/* Top Header Bar */}
         <header className="dashboard-top-header">
@@ -474,171 +483,184 @@ function Dashboard({ sess, logout, timeMode, setTimeMode }) {
           </div>
         )}
 
-        {/* Route Selector Horizontal Tabs */}
-        <div className="route-selector-scroll">
-          <div className="route-tabs-label">🚌 COIMBATORE FLEET:</div>
-          <div className="route-tabs-list">
-            {buses.map((b) => (
-              <button
-                key={b.id}
-                className={`route-tab-pill ${selected === b.id ? "active" : ""}`}
-                onClick={() => handleBusSwitch(b.id)}
-              >
-                <span className="route-num-badge">{b.number}</span>
-                <span className="route-name-text">{b.name}</span>
-                <span className="route-status-indicator" />
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Student Telemetry Widgets (Speedometer, ETA Countdown, Occupancy, Driver) */}
-        <StudentTelemetryWidget
-          bus={bus}
-          location={location}
-          selectedStop={selectedStop}
-          onSelectStop={setSelectedStop}
-        />
-
-        {/* Main Grid: Interactive Coimbatore Map & Route Progression Timeline */}
-        <section className="transit-dashboard-grid">
-          {/* Map Section */}
-          <div className="transit-map-panel">
-            <div className="panel-header-row">
-              <div>
-                <h2>Coimbatore Transit Radar Feed</h2>
-                <p className="panel-desc">
-                  Tracking <b>{bus?.name}</b> towards <b>Kalaignar Karunanidhi Institute of Technology Campus</b>
-                </p>
-              </div>
-              <div className="map-legend-items">
-                <span className="legend-item">
-                  <span className="legend-dot bus" /> Bus Live
-                </span>
-                <span className="legend-item">
-                  <span className="legend-dot stop" /> Stops
-                </span>
-                <span className="legend-item">
-                  <span className="legend-dot kit" /> KIT Campus
-                </span>
+        {/* TAB 1: LIVE GPS TRACKING & MAP */}
+        {activeTab === "tracking" && (
+          <div className="tab-pane-fade-in">
+            {/* Route Selector Horizontal Tabs */}
+            <div className="route-selector-scroll">
+              <div className="route-tabs-label">🚌 COIMBATORE FLEET:</div>
+              <div className="route-tabs-list">
+                {buses.map((b) => (
+                  <button
+                    key={b.id}
+                    className={`route-tab-pill ${selected === b.id ? "active" : ""}`}
+                    onClick={() => handleBusSwitch(b.id)}
+                  >
+                    <span className="route-num-badge">{b.number}</span>
+                    <span className="route-name-text">{b.name}</span>
+                    <span className="route-status-indicator" />
+                  </button>
+                ))}
               </div>
             </div>
 
-            <CoimbatoreTransitMap
+            {/* Student Telemetry Widgets (Speedometer, ETA Countdown, Occupancy, Driver) */}
+            <StudentTelemetryWidget
               bus={bus}
               location={location}
               selectedStop={selectedStop}
               onSelectStop={setSelectedStop}
+            />
+
+            {/* Main Grid: Interactive Coimbatore Map & Route Progression Timeline */}
+            <section className="transit-dashboard-grid">
+              {/* Map Section */}
+              <div className="transit-map-panel">
+                <div className="panel-header-row">
+                  <div>
+                    <h2>Coimbatore Transit Radar Feed</h2>
+                    <p className="panel-desc">
+                      Tracking <b>{bus?.name}</b> towards <b>Kalaignar Karunanidhi Institute of Technology Campus</b>
+                    </p>
+                  </div>
+                  <div className="map-legend-items">
+                    <span className="legend-item">
+                      <span className="legend-dot bus" /> Bus Live
+                    </span>
+                    <span className="legend-item">
+                      <span className="legend-dot stop" /> Stops
+                    </span>
+                    <span className="legend-item">
+                      <span className="legend-dot kit" /> KIT Campus
+                    </span>
+                  </div>
+                </div>
+
+                <CoimbatoreTransitMap
+                  bus={bus}
+                  location={location}
+                  selectedStop={selectedStop}
+                  onSelectStop={setSelectedStop}
+                  timeMode={timeMode}
+                />
+              </div>
+
+              {/* Right Side: Route Progression Timeline & Stop Schedule */}
+              <div className="transit-timeline-panel">
+                <div className="panel-header-row">
+                  <h3>Route Stop Progression</h3>
+                  <span className="total-stops-badge">
+                    {bus?.waypoints?.length || 0} Stops
+                  </span>
+                </div>
+
+                <p className="timeline-helper-text">
+                  Click any stop to view ETA and set as your boarding location:
+                </p>
+
+                <div className="timeline-stops-container">
+                  {(bus?.waypoints || []).map((wp, idx) => {
+                    const isSelected = selectedStop?.name === wp.name;
+                    const isLast = idx === (bus?.waypoints?.length || 1) - 1;
+                    const isPassed =
+                      location?.currentStopIndex !== undefined &&
+                      idx < location.currentStopIndex;
+                    const isCurrent =
+                      location?.currentStopIndex !== undefined &&
+                      idx === location.currentStopIndex;
+
+                    return (
+                      <div
+                        key={wp.name}
+                        className={`timeline-stop-item ${
+                          isSelected ? "selected" : ""
+                        } ${isPassed ? "passed" : ""} ${
+                          isCurrent ? "current" : ""
+                        } ${isLast ? "destination" : ""}`}
+                        onClick={() => setSelectedStop(wp)}
+                      >
+                        <div className="stop-marker-column">
+                          <div className="stop-node-circle">
+                            {isLast ? "🏫" : isPassed ? "✓" : idx + 1}
+                          </div>
+                          {!isLast && <div className="stop-connecting-line" />}
+                        </div>
+
+                        <div className="stop-info-content">
+                          <div className="stop-title-row">
+                            <b>{wp.name}</b>
+                            <span className="stop-scheduled-time">{wp.time}</span>
+                          </div>
+                          <div className="stop-sub-row">
+                            {isLast ? (
+                              <span className="destination-tag">
+                                ⭐ Final Destination (KIT Campus)
+                              </span>
+                            ) : (
+                              <span>ETA: {wp.etaMin} mins</span>
+                            )}
+                            {isSelected && (
+                              <span className="selected-tag">● My Boarding Stop</span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Driver Controls if logged in as Driver */}
+                {sess.user.role === "driver" && (
+                  <div className="driver-action-container">
+                    <h4>Driver Broadcast Controls</h4>
+                    <DriverControls
+                      busId={sess.user.busId}
+                      socket={socket}
+                      trip={trip}
+                      startTrip={startTrip}
+                      stopTrip={stopTrip}
+                    />
+                  </div>
+                )}
+              </div>
+            </section>
+          </div>
+        )}
+
+        {/* TAB 2: COIMBATORE ROUTES EXPLORER */}
+        {activeTab === "routes" && (
+          <div className="tab-pane-fade-in">
+            <RoutesExplorerView
+              buses={buses}
+              onTrackBus={handleTrackBusFromOtherView}
               timeMode={timeMode}
             />
           </div>
-
-          {/* Right Side: Route Progression Timeline & Stop Schedule */}
-          <div className="transit-timeline-panel">
-            <div className="panel-header-row">
-              <h3>Route Stop Progression</h3>
-              <span className="total-stops-badge">
-                {bus?.waypoints?.length || 0} Stops
-              </span>
-            </div>
-
-            <p className="timeline-helper-text">
-              Click any stop to view ETA and set as your boarding location:
-            </p>
-
-            <div className="timeline-stops-container">
-              {(bus?.waypoints || []).map((wp, idx) => {
-                const isSelected = selectedStop?.name === wp.name;
-                const isLast = idx === (bus?.waypoints?.length || 1) - 1;
-                const isPassed =
-                  location?.currentStopIndex !== undefined &&
-                  idx < location.currentStopIndex;
-                const isCurrent =
-                  location?.currentStopIndex !== undefined &&
-                  idx === location.currentStopIndex;
-
-                return (
-                  <div
-                    key={wp.name}
-                    className={`timeline-stop-item ${
-                      isSelected ? "selected" : ""
-                    } ${isPassed ? "passed" : ""} ${
-                      isCurrent ? "current" : ""
-                    } ${isLast ? "destination" : ""}`}
-                    onClick={() => setSelectedStop(wp)}
-                  >
-                    <div className="stop-marker-column">
-                      <div className="stop-node-circle">
-                        {isLast ? "🏫" : isPassed ? "✓" : idx + 1}
-                      </div>
-                      {!isLast && <div className="stop-connecting-line" />}
-                    </div>
-
-                    <div className="stop-info-content">
-                      <div className="stop-title-row">
-                        <b>{wp.name}</b>
-                        <span className="stop-scheduled-time">{wp.time}</span>
-                      </div>
-                      <div className="stop-sub-row">
-                        {isLast ? (
-                          <span className="destination-tag">
-                            ⭐ Final Destination (KIT Campus)
-                          </span>
-                        ) : (
-                          <span>ETA: {wp.etaMin} mins</span>
-                        )}
-                        {isSelected && (
-                          <span className="selected-tag">● My Boarding Stop</span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Driver Controls if logged in as Driver */}
-            {sess.user.role === "driver" && (
-              <div className="driver-action-container">
-                <h4>Driver Broadcast Controls</h4>
-                <DriverControls
-                  busId={sess.user.busId}
-                  socket={socket}
-                  trip={trip}
-                  startTrip={startTrip}
-                  stopTrip={stopTrip}
-                />
-              </div>
-            )}
-          </div>
-        </section>
-
-        {/* Campus Advisory & Announcements */}
-        {activeTab === "announcements" && (
-          <section className="announcements-section">
-            <h2>Campus Transit Bulletins & Traffic Updates</h2>
-            <div className="announcements-grid">
-              {announcements.map((a) => (
-                <div key={a.id} className={`announcement-card ${a.type}`}>
-                  <div className="announcement-badge">
-                    {a.type === "traffic"
-                      ? "🚦 TRAFFIC UPDATE"
-                      : a.type === "weather"
-                      ? "☀️ WEATHER REPORT"
-                      : "📢 ADVISORY"}
-                  </div>
-                  <h4>{a.title}</h4>
-                  <p>{a.desc}</p>
-                  <small>{a.time}</small>
-                </div>
-              ))}
-            </div>
-          </section>
         )}
 
-        {/* Fleet Operations Overview for Admin */}
-        {(sess.user.role === "admin" || activeTab === "admin") && (
-          <AdminPanel buses={buses} />
+        {/* TAB 3: CAMPUS ADVISORY & TRAFFIC BULLETIN */}
+        {activeTab === "announcements" && (
+          <div className="tab-pane-fade-in">
+            <TransitAdvisoryView timeMode={timeMode} />
+          </div>
+        )}
+
+        {/* TAB 4: BUS MASTER TIMETABLE */}
+        {activeTab === "schedule" && (
+          <div className="tab-pane-fade-in">
+            <BusScheduleView
+              buses={buses}
+              onTrackBus={handleTrackBusFromOtherView}
+              timeMode={timeMode}
+            />
+          </div>
+        )}
+
+        {/* TAB 5: ADMIN FLEET OPERATIONS */}
+        {activeTab === "admin" && (
+          <div className="tab-pane-fade-in">
+            <AdminPanel buses={buses} onTrackBus={handleTrackBusFromOtherView} />
+          </div>
         )}
       </main>
 
@@ -710,36 +732,66 @@ function DriverControls({ busId, socket, trip, startTrip, stopTrip }) {
   );
 }
 
-function AdminPanel({ buses }) {
+function AdminPanel({ buses, onTrackBus }) {
   return (
     <section className="admin-fleet-panel">
-      <h2>KIT Coimbatore Fleet Operations Hub</h2>
+      <div className="admin-header-row">
+        <div>
+          <h2>KIT Coimbatore Fleet Operations Hub</h2>
+          <p>Real-time vehicle telemetry, driver allocation, and maintenance status</p>
+        </div>
+        <div className="admin-stats-badge">
+          <b>{buses.length} Vehicles Active</b>
+        </div>
+      </div>
+
       <div className="fleet-table-container">
         <table className="fleet-table">
           <thead>
             <tr>
               <th>Bus #</th>
               <th>Route Name</th>
-              <th>Driver</th>
+              <th>Driver & Phone</th>
+              <th>Plate No.</th>
               <th>Capacity</th>
-              <th>Status</th>
+              <th>GPS Status</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>
             {buses.map((b) => (
               <tr key={b.id}>
                 <td>
-                  <b>{b.number}</b>
+                  <span className="bus-number-chip">{b.number}</span>
                 </td>
-                <td>{b.name}</td>
-                <td>{b.driver?.name || "Assigned Driver"}</td>
                 <td>
-                  {b.occupancy}/{b.capacity} Seats
+                  <b>{b.name}</b>
+                  <small className="stops-count-sub">
+                    {b.waypoints?.length || 0} Stops
+                  </small>
+                </td>
+                <td>
+                  <b>{b.driver?.name || "Assigned Driver"}</b>
+                  <small>{b.driver?.phone}</small>
+                </td>
+                <td>
+                  <span className="plate-badge">{b.driver?.plateNumber || "TN 38 BK 2024"}</span>
+                </td>
+                <td>
+                  {b.occupancy}/{b.capacity} Seats ({b.capacity - b.occupancy} free)
                 </td>
                 <td>
                   <span className={`status-pill ${b.status || "active"}`}>
-                    ● {b.status || "active"}
+                    ● {b.status === "active" ? "Active (Broadcasting)" : "Standby"}
                   </span>
+                </td>
+                <td>
+                  <button
+                    className="table-track-btn"
+                    onClick={() => onTrackBus && onTrackBus(b.id)}
+                  >
+                    🛰️ Track
+                  </button>
                 </td>
               </tr>
             ))}

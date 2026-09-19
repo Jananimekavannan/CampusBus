@@ -598,6 +598,16 @@ body {
   text-align: left;
 }
 
+/* Tab Pane Transitions */
+.tab-pane-fade-in {
+  animation: tabFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes tabFadeIn {
+  0% { opacity: 0; transform: translateY(8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
 /* =========================================================
    3. DASHBOARD & SIDEBAR LAYOUT
    ========================================================= */
@@ -1753,7 +1763,950 @@ body {
 }
 
 /* =========================================================
-   9. EMERGENCY SOS MODAL
+   9. COIMBATORE ROUTES EXPLORER PAGE (TAB 2)
+   ========================================================= */
+
+.routes-explorer-page {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.routes-header-banner {
+  background: linear-gradient(135deg, rgba(192, 24, 35, 0.2) 0%, rgba(27, 54, 93, 0.6) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 26px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.routes-badge-tag {
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: #f87171;
+  display: inline-block;
+  margin-bottom: 4px;
+}
+
+.routes-header-info h2 {
+  font-family: var(--font-heading);
+  font-size: 24px;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 6px;
+}
+
+.routes-header-info p {
+  font-size: 13px;
+  color: #cbd5e1;
+  max-width: 680px;
+  line-height: 1.5;
+}
+
+.routes-stats-pill {
+  display: flex;
+  gap: 16px;
+  background: rgba(15, 23, 42, 0.7);
+  padding: 14px 22px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stat-box {
+  text-align: center;
+}
+
+.stat-box b {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: 22px;
+  font-weight: 900;
+  color: #38bdf8;
+}
+
+.stat-box small {
+  font-size: 10.5px;
+  color: #94a3b8;
+}
+
+.routes-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.routes-search-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.routes-search-input-wrap .search-icon {
+  position: absolute;
+  left: 16px;
+  font-size: 16px;
+  color: #94a3b8;
+}
+
+.routes-search-input-wrap input {
+  width: 100%;
+  background: #151f30;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 14px 44px 14px 48px;
+  border-radius: 14px;
+  color: #fff;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.routes-search-input-wrap input:focus {
+  border-color: #38bdf8;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+}
+
+.search-clear-btn {
+  position: absolute;
+  right: 16px;
+  background: none;
+  border: none;
+  color: #94a3b8;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.routes-filter-chips {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.filter-chip {
+  background: #151f30;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 8px 16px;
+  border-radius: 20px;
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.filter-chip:hover {
+  background: #1e293b;
+  color: #fff;
+}
+
+.filter-chip.active {
+  background: #c01823;
+  color: #fff;
+  border-color: #c01823;
+  box-shadow: 0 4px 12px rgba(192, 24, 35, 0.35);
+}
+
+.routes-cards-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+.route-detail-card {
+  background: #151f30;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  padding: 24px;
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.route-detail-card:hover {
+  border-color: rgba(56, 189, 248, 0.3);
+  transform: translateY(-2px);
+}
+
+.route-card-top {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.route-card-number-badge {
+  width: 58px;
+  height: 58px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #c01823, #1b365d);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(192, 24, 35, 0.35);
+  flex-shrink: 0;
+}
+
+.route-card-number-badge span {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  opacity: 0.8;
+}
+
+.route-card-number-badge b {
+  font-family: var(--font-heading);
+  font-size: 22px;
+  font-weight: 900;
+}
+
+.route-card-title-group {
+  flex: 1;
+}
+
+.route-card-title-group h3 {
+  font-family: var(--font-heading);
+  font-size: 18px;
+  font-weight: 800;
+  color: #fff;
+}
+
+.route-path-summary {
+  font-size: 13px;
+  color: #94a3b8;
+  margin-top: 3px;
+}
+
+.track-live-btn {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  border: none;
+  color: #fff;
+  font-weight: 800;
+  font-size: 13px;
+  padding: 10px 18px;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.track-live-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.6);
+}
+
+.route-meta-highlights {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 14px 18px;
+  border-radius: 14px;
+}
+
+.meta-highlight-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.meta-highlight-item .icon {
+  font-size: 20px;
+}
+
+.meta-highlight-item small {
+  display: block;
+  font-size: 10.5px;
+  color: #94a3b8;
+}
+
+.meta-highlight-item b {
+  font-size: 13px;
+  color: #fff;
+}
+
+.route-driver-strip {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.driver-mini-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.driver-avatar-mini {
+  font-size: 22px;
+}
+
+.driver-mini-info b {
+  font-size: 13px;
+  color: #fff;
+}
+
+.driver-mini-info small {
+  display: block;
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.driver-phone-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #38bdf8;
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 7px 14px;
+  border-radius: 8px;
+}
+
+.toggle-stops-btn {
+  width: 100%;
+  background: transparent;
+  border: 1px dashed rgba(255, 255, 255, 0.15);
+  padding: 10px;
+  border-radius: 10px;
+  color: #38bdf8;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: all 0.2s;
+}
+
+.toggle-stops-btn:hover {
+  background: rgba(56, 189, 248, 0.08);
+}
+
+.stops-sequence-expanded-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 14px;
+  border-radius: 12px;
+}
+
+.stop-sequence-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #111a2e;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.stop-step-dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #1e293b;
+  color: #38bdf8;
+  font-size: 10px;
+  font-weight: 800;
+  display: grid;
+  place-items: center;
+}
+
+.stop-step-name {
+  flex: 1;
+}
+
+.stop-step-name b {
+  font-size: 12px;
+  color: #e2e8f0;
+}
+
+.dest-tag {
+  display: block;
+  font-size: 9px;
+  font-weight: 800;
+  color: #f59e0b;
+}
+
+.stop-step-time {
+  text-align: right;
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.stop-step-time small {
+  display: block;
+  font-size: 9.5px;
+  color: #38bdf8;
+}
+
+/* =========================================================
+   10. TRANSIT ADVISORY & BULLETIN PAGE (TAB 3)
+   ========================================================= */
+
+.transit-advisory-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.advisory-header-banner {
+  background: linear-gradient(135deg, rgba(27, 54, 93, 0.7) 0%, rgba(15, 23, 42, 0.9) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 26px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.advisory-badge-tag {
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: #38bdf8;
+}
+
+.advisory-header-banner h2 {
+  font-family: var(--font-heading);
+  font-size: 24px;
+  font-weight: 800;
+  color: #fff;
+  margin-top: 4px;
+}
+
+.advisory-header-banner p {
+  font-size: 13px;
+  color: #cbd5e1;
+  max-width: 600px;
+}
+
+.campus-weather-box {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(15, 23, 42, 0.8);
+  padding: 16px 22px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.weather-sun-icon {
+  font-size: 32px;
+}
+
+.campus-weather-box b {
+  font-size: 16px;
+  color: #fff;
+}
+
+.campus-weather-box small {
+  display: block;
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.weather-sub-metrics {
+  display: flex;
+  gap: 10px;
+  font-size: 10.5px;
+  color: #38bdf8;
+  margin-top: 4px;
+}
+
+.advisory-content-grid {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: 24px;
+}
+
+.advisory-panel {
+  background: #151f30;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  padding: 22px;
+  margin-bottom: 24px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.panel-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.panel-title-row h3,
+.advisory-panel h3 {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 800;
+  color: #fff;
+}
+
+.traffic-pulse-badge {
+  font-size: 10.5px;
+  font-weight: 800;
+  color: #10b981;
+}
+
+.traffic-alerts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.traffic-alert-card {
+  background: rgba(0, 0, 0, 0.25);
+  border-left: 4px solid #38bdf8;
+  border-radius: 10px;
+  padding: 14px;
+}
+
+.traffic-alert-card.warn {
+  border-left-color: #f59e0b;
+}
+
+.traffic-alert-card.good {
+  border-left-color: #10b981;
+}
+
+.traffic-alert-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.traffic-alert-top b {
+  font-size: 13.5px;
+  color: #fff;
+}
+
+.traffic-delay-pill {
+  font-size: 11px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.traffic-delay-pill.good { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+.traffic-delay-pill.warn { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+
+.traffic-alert-card p {
+  font-size: 12.5px;
+  color: #cbd5e1;
+  line-height: 1.4;
+}
+
+.traffic-alert-card small {
+  display: block;
+  font-size: 10.5px;
+  color: #94a3b8;
+  margin-top: 6px;
+}
+
+/* Circulars */
+.circulars-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.circular-item {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.circular-top {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.circular-badge {
+  font-size: 9.5px;
+  font-weight: 800;
+  background: rgba(192, 24, 35, 0.2);
+  color: #f87171;
+  padding: 2px 7px;
+  border-radius: 6px;
+}
+
+.circular-date {
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.circular-item h4 {
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.circular-item p {
+  font-size: 12.5px;
+  color: #94a3b8;
+  line-height: 1.5;
+}
+
+.helpdesk-sub {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: 4px;
+  margin-bottom: 14px;
+}
+
+.helpdesk-cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.helpdesk-contact-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(0, 0, 0, 0.25);
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.contact-icon {
+  font-size: 24px;
+}
+
+.contact-info b {
+  display: block;
+  font-size: 13px;
+  color: #fff;
+}
+
+.contact-info small {
+  display: block;
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.contact-info a {
+  display: inline-block;
+  margin-top: 3px;
+  font-size: 12px;
+  font-weight: 800;
+  color: #38bdf8;
+  text-decoration: none;
+}
+
+.advisory-feedback-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: #cbd5e1;
+  margin-bottom: 6px;
+}
+
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  background: #111a2e;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 10px 12px;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 13px;
+  outline: none;
+}
+
+.submit-feedback-btn {
+  background: linear-gradient(135deg, #c01823, #1b365d);
+  border: none;
+  color: #fff;
+  font-weight: 800;
+  font-size: 13px;
+  padding: 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.feedback-success-msg {
+  text-align: center;
+  padding: 20px;
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 14px;
+  color: #34d399;
+}
+
+/* =========================================================
+   11. BUS SCHEDULE MASTER TIMETABLE (TAB 4)
+   ========================================================= */
+
+.bus-schedule-page {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.schedule-header-banner {
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.2) 0%, rgba(192, 24, 35, 0.2) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 24px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.schedule-badge-tag {
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: #38bdf8;
+}
+
+.schedule-header-banner h2 {
+  font-family: var(--font-heading);
+  font-size: 24px;
+  font-weight: 800;
+  color: #fff;
+  margin-top: 4px;
+}
+
+.schedule-header-banner p {
+  font-size: 13px;
+  color: #cbd5e1;
+}
+
+.schedule-tabs-pill {
+  display: flex;
+  background: #151f30;
+  padding: 4px;
+  border-radius: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.schedule-tab-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 12.5px;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.schedule-tab-btn.active {
+  background: #2563eb;
+  color: #fff;
+}
+
+.schedule-table-card {
+  background: #151f30;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.25);
+}
+
+.table-header-strip {
+  padding: 18px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.table-header-strip h3 {
+  font-family: var(--font-heading);
+  font-size: 15.5px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.master-schedule-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.master-schedule-table th {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 14px 20px;
+  text-align: left;
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: #94a3b8;
+}
+
+.master-schedule-table td {
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  font-size: 13px;
+}
+
+.bus-number-chip {
+  background: #c01823;
+  color: #fff;
+  font-weight: 900;
+  font-size: 13px;
+  padding: 4px 10px;
+  border-radius: 8px;
+}
+
+.route-name-title {
+  color: #fff;
+  display: block;
+}
+
+.stops-count-sub {
+  color: #94a3b8;
+  font-size: 11px;
+}
+
+.stops-inline-preview {
+  color: #cbd5e1;
+  font-size: 12.5px;
+}
+
+.time-highlight {
+  color: #38bdf8;
+  font-family: var(--font-mono);
+}
+
+.time-highlight.arrival {
+  color: #34d399;
+}
+
+.driver-table-cell b {
+  display: block;
+  color: #fff;
+}
+
+.driver-table-cell small {
+  color: #94a3b8;
+}
+
+.table-track-btn {
+  background: rgba(56, 189, 248, 0.15);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  color: #38bdf8;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-weight: 800;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.table-track-btn:hover {
+  background: #38bdf8;
+  color: #0f172a;
+}
+
+/* =========================================================
+   12. ADMIN FLEET CONTROL PANEL
+   ========================================================= */
+
+.admin-fleet-panel {
+  background: #151f30;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  padding: 24px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+}
+
+.admin-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.admin-header-row h2 {
+  font-family: var(--font-heading);
+  font-size: 20px;
+  font-weight: 800;
+  color: #fff;
+}
+
+.admin-header-row p {
+  font-size: 12.5px;
+  color: #94a3b8;
+}
+
+.fleet-table-container {
+  overflow-x: auto;
+}
+
+.fleet-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.fleet-table th {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 12px 18px;
+  text-align: left;
+  font-size: 11.5px;
+  font-weight: 800;
+  color: #94a3b8;
+}
+
+.fleet-table td {
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  font-size: 13px;
+}
+
+.plate-badge {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.status-pill {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.status-pill.active {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+}
+
+/* =========================================================
+   13. EMERGENCY SOS MODAL
    ========================================================= */
 
 .modal-backdrop {
@@ -1932,7 +2885,7 @@ body {
 }
 
 /* =========================================================
-   10. RESPONSIVE MEDIA QUERIES
+   14. RESPONSIVE MEDIA QUERIES
    ========================================================= */
 
 @media (max-width: 1100px) {
@@ -1959,6 +2912,9 @@ body {
   .transit-dashboard-grid {
     grid-template-columns: 1fr;
   }
+  .advisory-content-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 640px) {
@@ -1972,5 +2928,8 @@ body {
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
+  }
+  .routes-meta-highlights {
+    grid-template-columns: 1fr 1fr;
   }
 }
