@@ -2,17 +2,16 @@ import React, { useEffect, useRef } from "react";
 
 /**
  * RevolvingBusRoad - High-Tech Multi-Bus Campus Fleet Radar Canvas
- * Advanced multi-layered transit canvas:
+ * Flawlessly aligned around the login card:
+ * - Dynamically measures the exact DOM `.login-card` position and dimensions
+ * - Mathematically exact rounded-rectangle spline for 100% center-aligned road navigation
  * - 3 Active KIT College Buses (Bus 12 Cyber Gold, Bus 07 Electric Cyan, Bus 03 Neon Violet)
- * - Dynamic volumetric headlight cones, glowing cabin passenger lights, turn indicators, and brake lights
- * - Multi-node Cyber Particle Constellation with real-time distance proximity triangulation lines
- * - Expanding Concentric Sonar Rings & 360° Radar Sweep
- * - Coimbatore Transit Landmark Badges (Gandhipuram, Peelamedu, Singanallur, Sulur, KIT Campus Central)
- * - Interactive mouse parallax reaction
+ * - Volumetric headlights, cabin lights, brake lights, and beacon pulse halos
+ * - Concentric Sonar Waves & 360° Radar Sweep
+ * - Real Coimbatore Transit stop waypoints symmetrically positioned along the circuit
  */
 export default function RevolvingBusRoad({ timeMode = "night" }) {
   const canvasRef = useRef(null);
-  const mouseRef = useRef({ x: window.innerWidth / 2, y: window.innerHeight / 2, targetX: 0, targetY: 0 });
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -29,18 +28,7 @@ export default function RevolvingBusRoad({ timeMode = "night" }) {
       height = canvas.height = window.innerHeight;
     };
 
-    const handleMouseMove = (e) => {
-      const rect = canvas.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      mouseRef.current.x = x;
-      mouseRef.current.y = y;
-      mouseRef.current.targetX = (x - width / 2) * 0.04;
-      mouseRef.current.targetY = (y - height / 2) * 0.04;
-    };
-
     window.addEventListener("resize", handleResize);
-    window.addEventListener("mousemove", handleMouseMove);
 
     const isDay = timeMode === "day";
 
@@ -55,8 +43,8 @@ export default function RevolvingBusRoad({ timeMode = "night" }) {
           waypointBg: "#2563eb",
           waypointText: "#ffffff",
           gridLine: "rgba(15, 23, 42, 0.04)",
-          particle: "rgba(37, 99, 235, 0.25)",
-          particleLine: "rgba(37, 99, 235, 0.12)",
+          particle: "rgba(37, 99, 235, 0.22)",
+          particleLine: "rgba(37, 99, 235, 0.1)",
           sonarRing: "rgba(37, 99, 235, 0.15)",
         }
       : {
@@ -68,82 +56,100 @@ export default function RevolvingBusRoad({ timeMode = "night" }) {
           waypointBg: "#0284c7",
           waypointText: "#ffffff",
           gridLine: "rgba(255, 255, 255, 0.035)",
-          particle: "rgba(56, 189, 248, 0.4)",
-          particleLine: "rgba(56, 189, 248, 0.15)",
-          sonarRing: "rgba(56, 189, 248, 0.2)",
+          particle: "rgba(56, 189, 248, 0.35)",
+          particleLine: "rgba(56, 189, 248, 0.12)",
+          sonarRing: "rgba(56, 189, 248, 0.18)",
         };
 
     // 1. Initialize Cyber Constellation Particles
-    const particleCount = isDay ? 35 : 65;
+    const particleCount = isDay ? 30 : 55;
     const particles = [];
     for (let i = 0; i < particleCount; i++) {
       particles.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 0.45,
-        vy: (Math.random() - 0.5) * 0.45,
-        size: Math.random() * 2.2 + 1,
-        alpha: Math.random() * 0.6 + 0.2,
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: (Math.random() - 0.5) * 0.4,
+        size: Math.random() * 2 + 1,
       });
     }
 
-    // 2. Construct racetrack path points around the center
-    function buildRacetrackPoints(cx, cy, rw, rh, cornerRadius, segments = 360) {
-      const pts = [];
+    // 2. Mathematically Exact Rounded Rectangle Spline Generator
+    function buildExactRacetrackSpline(cx, cy, rw, rh, cr, numPoints = 400) {
       const hw = rw / 2;
       const hh = rh / 2;
-      const cr = cornerRadius;
+      const r = Math.min(cr, hw, hh);
 
-      for (let i = 0; i < segments; i++) {
-        const u = (i / segments) * 4;
+      const topLen = rw - 2 * r;
+      const rightLen = rh - 2 * r;
+      const cornerArc = (Math.PI / 2) * r;
+      const totalPerimeter = 2 * topLen + 2 * rightLen + 4 * cornerArc;
+
+      const pts = [];
+
+      for (let i = 0; i < numPoints; i++) {
+        let d = (i / numPoints) * totalPerimeter;
         let x, y;
-        if (u < 1) {
-          // Top edge (left to right)
-          const f = u;
-          x = cx - hw + cr + f * (rw - 2 * cr);
+
+        // Section 1: Top Straight (Left to Right)
+        if (d < topLen) {
+          x = cx - hw + r + d;
           y = cy - hh;
-          if (f > 0.85) {
-            const angle = -Math.PI / 2 + ((f - 0.85) / 0.15) * (Math.PI / 2);
-            x = cx + hw - cr + Math.cos(angle) * cr;
-            y = cy - hh + cr + Math.sin(angle) * cr;
-          }
-        } else if (u < 2) {
-          // Right edge (top to bottom)
-          const f = u - 1;
-          x = cx + hw;
-          y = cy - hh + cr + f * (rh - 2 * cr);
-          if (f > 0.85) {
-            const angle = 0 + ((f - 0.85) / 0.15) * (Math.PI / 2);
-            x = cx + hw - cr + Math.cos(angle) * cr;
-            y = cy + hh - cr + Math.sin(angle) * cr;
-          }
-        } else if (u < 3) {
-          // Bottom edge (right to left)
-          const f = u - 2;
-          x = cx + hw - cr - f * (rw - 2 * cr);
-          y = cy + hh;
-          if (f > 0.85) {
-            const angle = Math.PI / 2 + ((f - 0.85) / 0.15) * (Math.PI / 2);
-            x = cx - hw + cr + Math.cos(angle) * cr;
-            y = cy + hh - cr + Math.sin(angle) * cr;
-          }
-        } else {
-          // Left edge (bottom to top)
-          const f = u - 3;
-          x = cx - hw;
-          y = cy + hh - cr - f * (rh - 2 * cr);
-          if (f > 0.85) {
-            const angle = Math.PI + ((f - 0.85) / 0.15) * (Math.PI / 2);
-            x = cx - hw + cr + Math.cos(angle) * cr;
-            y = cy - hh + cr + Math.sin(angle) * cr;
-          }
         }
+        // Section 2: Top-Right Corner Arc
+        else if (d < topLen + cornerArc) {
+          const segD = d - topLen;
+          const angle = -Math.PI / 2 + (segD / cornerArc) * (Math.PI / 2);
+          x = cx + hw - r + Math.cos(angle) * r;
+          y = cy - hh + r + Math.sin(angle) * r;
+        }
+        // Section 3: Right Straight (Top to Bottom)
+        else if (d < topLen + cornerArc + rightLen) {
+          const segD = d - (topLen + cornerArc);
+          x = cx + hw;
+          y = cy - hh + r + segD;
+        }
+        // Section 4: Bottom-Right Corner Arc
+        else if (d < topLen + cornerArc + rightLen + cornerArc) {
+          const segD = d - (topLen + cornerArc + rightLen);
+          const angle = 0 + (segD / cornerArc) * (Math.PI / 2);
+          x = cx + hw - r + Math.cos(angle) * r;
+          y = cy + hh - r + Math.sin(angle) * r;
+        }
+        // Section 5: Bottom Straight (Right to Left)
+        else if (d < topLen + cornerArc + rightLen + cornerArc + topLen) {
+          const segD = d - (topLen + cornerArc + rightLen + cornerArc);
+          x = cx + hw - r - segD;
+          y = cy + hh;
+        }
+        // Section 6: Bottom-Left Corner Arc
+        else if (d < topLen + cornerArc + rightLen + cornerArc + topLen + cornerArc) {
+          const segD = d - (topLen + cornerArc + rightLen + cornerArc + topLen);
+          const angle = Math.PI / 2 + (segD / cornerArc) * (Math.PI / 2);
+          x = cx - hw + r + Math.cos(angle) * r;
+          y = cy + hh - r + Math.sin(angle) * r;
+        }
+        // Section 7: Left Straight (Bottom to Top)
+        else if (d < topLen + cornerArc + rightLen + cornerArc + topLen + cornerArc + rightLen) {
+          const segD = d - (topLen + cornerArc + rightLen + cornerArc + topLen + cornerArc);
+          x = cx - hw;
+          y = cy + hh - r - segD;
+        }
+        // Section 8: Top-Left Corner Arc
+        else {
+          const segD = d - (topLen + cornerArc + rightLen + cornerArc + topLen + cornerArc + rightLen);
+          const angle = Math.PI + (segD / cornerArc) * (Math.PI / 2);
+          x = cx - hw + r + Math.cos(angle) * r;
+          y = cy - hh + r + Math.sin(angle) * r;
+        }
+
         pts.push({ x, y });
       }
+
       return pts;
     }
 
-    // 3. Multiple KIT Fleet Buses on the road
+    // 3. Active KIT Fleet Buses
     const fleet = [
       {
         name: "BUS 12",
@@ -151,29 +157,29 @@ export default function RevolvingBusRoad({ timeMode = "night" }) {
         stroke: "#b45309",
         stripe: "#b91c1c",
         offset: 0,
-        speed: 0.58,
+        speed: 0.65,
         route: "12 • GANDHIPURAM EXP",
-        headlightHue: "rgba(254, 240, 138, 0.8)",
+        headlightHue: "rgba(254, 240, 138, 0.85)",
       },
       {
         name: "BUS 07",
         color: "#0284c7",
         stroke: "#0369a1",
         stripe: "#f59e0b",
-        offset: 120,
-        speed: 0.58,
+        offset: 133,
+        speed: 0.65,
         route: "07 • SARAVANAMPATTI",
-        headlightHue: "rgba(56, 189, 248, 0.8)",
+        headlightHue: "rgba(56, 189, 248, 0.85)",
       },
       {
         name: "BUS 03",
         color: "#8b5cf6",
         stroke: "#6d28d9",
         stripe: "#ec4899",
-        offset: 240,
-        speed: 0.58,
+        offset: 266,
+        speed: 0.65,
         route: "03 • RS PURAM LINE",
-        headlightHue: "rgba(216, 180, 254, 0.8)",
+        headlightHue: "rgba(216, 180, 254, 0.85)",
       },
     ];
 
@@ -183,11 +189,22 @@ export default function RevolvingBusRoad({ timeMode = "night" }) {
     function render(currentTime) {
       ctx.clearRect(0, 0, width, height);
 
-      // Smooth parallax offset from mouse
-      const px = mouseRef.current.targetX || 0;
-      const py = mouseRef.current.targetY || 0;
-      const cx = width / 2 + px;
-      const cy = height / 2 + py;
+      // Dynamically measure actual DOM Login Card position for flawless alignment
+      const cardEl = document.querySelector(".login-card");
+      const cardRect = cardEl ? cardEl.getBoundingClientRect() : null;
+
+      const isMobile = width < 640;
+      const cx = cardRect ? cardRect.left + cardRect.width / 2 : width / 2;
+      const cy = cardRect ? cardRect.top + cardRect.height / 2 : height / 2;
+
+      const cardW = cardRect ? cardRect.width : (isMobile ? Math.min(width - 40, 360) : 440);
+      const cardH = cardRect ? cardRect.height : (isMobile ? 620 : 640);
+
+      const roadMargin = isMobile ? 52 : 78;
+      const roadW = cardW + roadMargin * 2;
+      const roadH = cardH + roadMargin * 2;
+      const cornerRadius = isMobile ? 48 : 68;
+      const asphaltWidth = isMobile ? 48 : 64;
 
       // 1. Radar Coordinate Grid
       ctx.strokeStyle = theme.gridLine;
@@ -225,9 +242,9 @@ export default function RevolvingBusRoad({ timeMode = "night" }) {
         for (let j = i + 1; j < particles.length; j++) {
           const p2 = particles[j];
           const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
-          if (dist < 95) {
+          if (dist < 90) {
             ctx.strokeStyle = theme.particleLine;
-            ctx.lineWidth = 0.8 * (1 - dist / 95);
+            ctx.lineWidth = 0.8 * (1 - dist / 90);
             ctx.beginPath();
             ctx.moveTo(p.x, p.y);
             ctx.lineTo(p2.x, p2.y);
@@ -236,27 +253,14 @@ export default function RevolvingBusRoad({ timeMode = "night" }) {
         }
       }
 
-      // Card bounding dimensions + surrounding road offset
-      const isMobile = width < 640;
-      const cardW = isMobile ? Math.min(width - 40, 360) : 460;
-      const cardH = isMobile ? 600 : 560;
-
-      const roadMargin = isMobile ? 55 : 92;
-      const roadW = cardW + roadMargin * 2;
-      const roadH = cardH + roadMargin * 2;
-      const cornerRadius = isMobile ? 45 : 72;
-      const asphaltWidth = isMobile ? 52 : 70;
-
       // 3. Expanding Concentric Sonar Wave Rings
       sonarRadius = (sonarRadius + 0.8) % (roadW * 0.75);
-      const sonarAlpha = Math.max(0, 1 - sonarRadius / (roadW * 0.75));
       ctx.strokeStyle = theme.sonarRing;
       ctx.lineWidth = 1.5;
       ctx.beginPath();
       ctx.arc(cx, cy, sonarRadius, 0, Math.PI * 2);
       ctx.stroke();
 
-      // Second Sonar Ring
       const sonar2 = (sonarRadius + roadW * 0.35) % (roadW * 0.75);
       ctx.beginPath();
       ctx.arc(cx, cy, sonar2, 0, Math.PI * 2);
@@ -277,7 +281,7 @@ export default function RevolvingBusRoad({ timeMode = "night" }) {
       ctx.fill();
       ctx.restore();
 
-      // 5. Draw Continuous High-Tech Asphalt Highway
+      // 5. Draw Continuous High-Tech Asphalt Highway around Login Card
       ctx.strokeStyle = theme.road;
       ctx.lineWidth = asphaltWidth;
       ctx.lineJoin = "round";
@@ -338,17 +342,15 @@ export default function RevolvingBusRoad({ timeMode = "night" }) {
       ctx.stroke();
       ctx.setLineDash([]);
 
-      // 6. Coimbatore Transit Route Waypoints along the Circuit
+      // 6. Coimbatore Transit Route Waypoints symmetrically placed
       const waypoints = [
-        { name: "📍 Peelamedu Hub", x: cx - roadW / 2, y: cy - roadH / 2 + 60, dist: "3.2km" },
-        { name: "📍 Hope College", x: cx + roadW / 2, y: cy - roadH / 2 + 60, dist: "5.8km" },
-        { name: "📍 Singanallur", x: cx + roadW / 2, y: cy + roadH / 2 - 60, dist: "8.4km" },
-        { name: "📍 Sulur RTO", x: cx - roadW / 2, y: cy + roadH / 2 - 60, dist: "11.1km" },
-        { name: "🏫 KIT Campus Central", x: cx, y: cy - roadH / 2 - 28, isKit: true, dist: "Terminal" },
+        { name: "📍 Peelamedu Hub", x: cx - roadW / 2, y: cy, dist: "3.2km" },
+        { name: "📍 Singanallur", x: cx + roadW / 2, y: cy, dist: "8.4km" },
+        { name: "📍 Sulur RTO", x: cx, y: cy + roadH / 2 + 18, dist: "11.1km" },
+        { name: "🏫 KIT Campus Central", x: cx, y: cy - roadH / 2 - 20, isKit: true, dist: "Terminal" },
       ];
 
       waypoints.forEach((wp) => {
-        // Glowing Stop Ring
         ctx.fillStyle = wp.isKit ? "#c01823" : theme.waypointBg;
         ctx.beginPath();
         ctx.arc(wp.x, wp.y, wp.isKit ? 9 : 6.5, 0, Math.PI * 2);
@@ -362,19 +364,19 @@ export default function RevolvingBusRoad({ timeMode = "night" }) {
         ctx.arc(wp.x, wp.y, (wp.isKit ? 9 : 6.5) + ping * 8, 0, Math.PI * 2);
         ctx.stroke();
 
-        // Waypoint Label & Subtext
+        // Waypoint Label & Distance Subtext
         ctx.fillStyle = wp.isKit ? "#fca5a5" : "#93c5fd";
         ctx.font = wp.isKit ? "bold 11px sans-serif" : "bold 9.5px sans-serif";
         ctx.textAlign = "center";
-        ctx.fillText(wp.name, wp.x, wp.y - 14);
+        ctx.fillText(wp.name, wp.x, wp.y - 12);
 
         ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
         ctx.font = "8px monospace";
         ctx.fillText(wp.dist, wp.x, wp.y + 16);
       });
 
-      // 7. Generate Spline Path & Render Active KIT Fleet Buses
-      const spline = buildRacetrackPoints(cx, cy, roadW, roadH, cornerRadius, 360);
+      // 7. Render Buses Exactly on the Racetrack Spline
+      const spline = buildExactRacetrackSpline(cx, cy, roadW, roadH, cornerRadius, 400);
 
       fleet.forEach((busData) => {
         busData.offset = (busData.offset + busData.speed) % spline.length;
@@ -384,14 +386,14 @@ export default function RevolvingBusRoad({ timeMode = "night" }) {
         const next = spline[nextIdx];
         const angle = Math.atan2(next.y - cur.y, next.x - cur.x);
 
-        const busLen = isMobile ? 46 : 56;
-        const busW = isMobile ? 18 : 23;
+        const busLen = isMobile ? 44 : 52;
+        const busW = isMobile ? 18 : 22;
 
         ctx.save();
         ctx.translate(cur.x, cur.y);
         ctx.rotate(angle);
 
-        // Dynamic Underglow Shadow
+        // Underglow Shadow
         ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
         ctx.beginPath();
         ctx.roundRect(-busLen / 2 + 4, -busW / 2 + 4, busLen, busW, 6);
@@ -509,7 +511,6 @@ export default function RevolvingBusRoad({ timeMode = "night" }) {
     return () => {
       cancelAnimationFrame(animationFrameId);
       window.removeEventListener("resize", handleResize);
-      window.removeEventListener("mousemove", handleMouseMove);
     };
   }, [timeMode]);
 
