@@ -416,31 +416,125 @@ app.get("/api/location/:busId", auth, (req, res) =>
   res.json(locations.get(req.params.busId) || null)
 );
 
+// Admin Live Inbox & Messages Store
+const adminMessages = [
+  {
+    id: "msg_1",
+    senderType: "student",
+    senderName: "Janani Student",
+    senderId: "u1",
+    busId: "bus12",
+    category: "sos",
+    title: "🚨 Emergency SOS Broadcast",
+    content: "Assistance requested near Peelamedu signal. Student is on board Bus 12.",
+    time: new Date(Date.now() - 4 * 60 * 1000).toISOString(),
+    status: "unread",
+  },
+  {
+    id: "msg_2",
+    senderType: "driver",
+    senderName: "Driver Kumarasamy",
+    senderId: "u2",
+    busId: "bus12",
+    category: "traffic",
+    title: "🚦 Traffic Delay Alert",
+    content: "Heavy morning metro construction traffic at Hope College junction (+8 min delay).",
+    time: new Date(Date.now() - 11 * 60 * 1000).toISOString(),
+    status: "unread",
+  },
+  {
+    id: "msg_3",
+    senderType: "student",
+    senderName: "Karthik R.",
+    senderId: "u4",
+    busId: "bus15",
+    category: "query",
+    title: "💬 New Stop Pickup Request",
+    content: "Requesting boarding stop at CHIL SEZ tech park for morning 07:25 AM pickup.",
+    time: new Date(Date.now() - 25 * 60 * 1000).toISOString(),
+    status: "resolved",
+  },
+];
+
 // Campus announcements & Traffic updates feed
+const campusAnnouncements = [
+  {
+    id: "a1",
+    title: "Trichy Road - Singanallur Traffic Clear",
+    type: "traffic",
+    time: "Just now",
+    desc: "Traffic is flowing smoothly near Ondipudur Flyover towards KIT Campus.",
+  },
+  {
+    id: "a2",
+    title: "Coimbatore Weather • Kannampalayam",
+    type: "weather",
+    time: "2 mins ago",
+    desc: "28°C • Clear skies and optimal transit conditions across all routes.",
+  },
+  {
+    id: "a3",
+    title: "KIT Transport Advisory",
+    type: "info",
+    time: "10 mins ago",
+    desc: "All KIT college buses are equipped with high-precision GPS tracking & RFID attendance.",
+  },
+];
+
 app.get("/api/announcements", auth, (req, res) => {
-  res.json([
-    {
-      id: "a1",
-      title: "Trichy Road - Singanallur Traffic Clear",
-      type: "traffic",
-      time: "Just now",
-      desc: "Traffic is flowing smoothly near Ondipudur Flyover towards KIT Campus.",
-    },
-    {
-      id: "a2",
-      title: "Coimbatore Weather • Kannampalayam",
-      type: "weather",
-      time: "2 mins ago",
-      desc: "28°C • Clear skies and optimal transit conditions across all routes.",
-    },
-    {
-      id: "a3",
-      title: "KIT Transport Advisory",
-      type: "info",
-      time: "10 mins ago",
-      desc: "All KIT college buses are equipped with high-precision GPS tracking & RFID attendance.",
-    },
-  ]);
+  res.json(campusAnnouncements);
+});
+
+// Admin Broadcast Announcement
+app.post("/api/admin/broadcast", auth, (req, res) => {
+  if (req.user.role !== "admin") return res.status(403).json({ message: "Admins only" });
+  const { title, desc, type } = req.body;
+  const newAnn = {
+    id: "a_" + Date.now(),
+    title: title || "KIT Transport Notice",
+    desc: desc || "Official fleet update",
+    type: type || "info",
+    time: "Just now",
+  };
+  campusAnnouncements.unshift(newAnn);
+  io.emit("announcement:new", newAnn);
+  res.json({ ok: true, announcement: newAnn });
+});
+
+// Admin Inbox & Messages Endpoints
+app.get("/api/admin/messages", auth, (req, res) => {
+  res.json(adminMessages);
+});
+
+app.post("/api/messages", auth, (req, res) => {
+  const { category, title, content, busId } = req.body;
+  const newMsg = {
+    id: "msg_" + Date.now(),
+    senderType: req.user.role,
+    senderName: req.user.name,
+    senderId: req.user.id,
+    busId: busId || req.user.busId || "bus12",
+    category: category || "query",
+    title: title || (req.user.role === "driver" ? "Driver Road Advisory" : "Student Query"),
+    content: content || "",
+    time: new Date().toISOString(),
+    status: "unread",
+  };
+  adminMessages.unshift(newMsg);
+  io.emit("admin:message", newMsg);
+  res.json({ ok: true, message: newMsg });
+});
+
+app.patch("/api/admin/messages/:id/resolve", auth, (req, res) => {
+  const msg = adminMessages.find((m) => m.id === req.params.id);
+  if (msg) msg.status = "resolved";
+  res.json({ ok: true, message: msg });
+});
+
+app.delete("/api/admin/messages/:id", auth, (req, res) => {
+  const idx = adminMessages.findIndex((m) => m.id === req.params.id);
+  if (idx !== -1) adminMessages.splice(idx, 1);
+  res.json({ ok: true });
 });
 
 // SOS Emergency alert endpoint
@@ -455,7 +549,23 @@ app.post("/api/emergency/sos", auth, (req, res) => {
     message: message || "Immediate campus security assistance requested.",
     time: new Date().toISOString(),
   };
+
+  const newMsg = {
+    id: "msg_" + Date.now(),
+    senderType: "student",
+    senderName: req.user.name,
+    senderId: req.user.id,
+    busId: busId || "bus12",
+    category: "sos",
+    title: `🚨 Emergency SOS from ${req.user.name}`,
+    content: `Location/Stop: ${stopName || "Transit Route"} - Note: ${message || "Emergency requested"}`,
+    time: new Date().toISOString(),
+    status: "unread",
+  };
+  adminMessages.unshift(newMsg);
+
   io.emit("admin:sos", alert);
+  io.emit("admin:message", newMsg);
   res.json({
     ok: true,
     message: "SOS alert broadcasted to KIT Campus Security Control Room (+91 422 2367890).",
@@ -465,6 +575,8 @@ app.post("/api/emergency/sos", auth, (req, res) => {
 
 io.on("connection", (socket) => {
   socket.on("bus:join", (busId) => socket.join(`bus:${busId}`));
+
+  // Location Updates
   socket.on("location:update", (data) => {
     if (!data?.busId || typeof data.lat !== "number" || typeof data.lng !== "number") return;
     const loc = {
@@ -481,6 +593,24 @@ io.on("connection", (socket) => {
     if (b) b.status = "active";
     io.to(`bus:${data.busId}`).emit("location:update", loc);
     io.emit("admin:location", loc);
+  });
+
+  // Driver Incident Dispatches
+  socket.on("admin:incident", (data) => {
+    const newMsg = {
+      id: "msg_" + Date.now(),
+      senderType: "driver",
+      senderName: data.driverName || "KIT Bus Driver",
+      senderId: data.busId,
+      busId: data.busId || "bus12",
+      category: data.type?.toLowerCase().includes("traffic") ? "traffic" : "breakdown",
+      title: `⚠️ Driver Alert: ${data.type || "Road Incident"}`,
+      content: data.note || "Incident reported along vehicle transit route.",
+      time: data.time || new Date().toISOString(),
+      status: "unread",
+    };
+    adminMessages.unshift(newMsg);
+    io.emit("admin:message", newMsg);
   });
 });
 

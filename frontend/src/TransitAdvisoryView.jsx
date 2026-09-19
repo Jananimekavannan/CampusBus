@@ -1,18 +1,39 @@
 import React, { useState } from "react";
+import axios from "axios";
 
-export default function TransitAdvisoryView({ timeMode = "night" }) {
+const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+export default function TransitAdvisoryView({ timeMode = "night", token, user }) {
   const [feedbackCategory, setFeedbackCategory] = useState("general");
   const [feedbackMsg, setFeedbackMsg] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!feedbackMsg.trim()) return;
-    setSubmitted(true);
-    setTimeout(() => {
-      setFeedbackMsg("");
-      setSubmitted(false);
-    }, 4000);
+
+    try {
+      if (token) {
+        await axios.post(
+          `${API}/api/messages`,
+          {
+            category: "query",
+            title: `💬 Student Inquiry (${feedbackCategory.replace("_", " ").toUpperCase()})`,
+            content: feedbackMsg,
+            busId: "bus12",
+          },
+          { headers: { Authorization: "Bearer " + token } }
+        );
+      }
+      setSubmitted(true);
+      setTimeout(() => {
+        setFeedbackMsg("");
+        setSubmitted(false);
+      }, 4000);
+    } catch (err) {
+      console.warn("Feedback post error:", err);
+      setSubmitted(true);
+    }
   };
 
   const trafficAlerts = [

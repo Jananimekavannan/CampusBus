@@ -10,6 +10,7 @@ import RoutesExplorerView from "./RoutesExplorerView";
 import TransitAdvisoryView from "./TransitAdvisoryView";
 import BusScheduleView from "./BusScheduleView";
 import DriverDashboard from "./DriverDashboard";
+import AdminDashboard from "./AdminDashboard";
 import SosModal from "./SosModal";
 import kitLogo from "./assets/kit-logo.png";
 import "./styles.css";
@@ -305,6 +306,20 @@ function Dashboard({ sess, logout, timeMode, setTimeMode }) {
   if (sess.user.role === "driver") {
     return (
       <DriverDashboard
+        sess={sess}
+        logout={logout}
+        buses={buses}
+        timeMode={timeMode}
+        setTimeMode={setTimeMode}
+        socket={socket}
+      />
+    );
+  }
+
+  // Dedicated Transport Command Admin Experience
+  if (sess.user.role === "admin") {
+    return (
+      <AdminDashboard
         sess={sess}
         logout={logout}
         buses={buses}
@@ -649,7 +664,11 @@ function Dashboard({ sess, logout, timeMode, setTimeMode }) {
         {/* TAB 3: CAMPUS ADVISORY & TRAFFIC BULLETIN */}
         {activeTab === "announcements" && (
           <div className="tab-pane-fade-in">
-            <TransitAdvisoryView timeMode={timeMode} />
+            <TransitAdvisoryView
+              timeMode={timeMode}
+              token={sess.token}
+              user={sess.user}
+            />
           </div>
         )}
 
