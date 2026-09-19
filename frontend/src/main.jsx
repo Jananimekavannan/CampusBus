@@ -9,6 +9,7 @@ import StudentTelemetryWidget from "./StudentTelemetryWidget";
 import RoutesExplorerView from "./RoutesExplorerView";
 import TransitAdvisoryView from "./TransitAdvisoryView";
 import BusScheduleView from "./BusScheduleView";
+import DriverDashboard from "./DriverDashboard";
 import SosModal from "./SosModal";
 import kitLogo from "./assets/kit-logo.png";
 import "./styles.css";
@@ -299,6 +300,20 @@ function Dashboard({ sess, logout, timeMode, setTimeMode }) {
   }, [selected, socket]);
 
   const bus = buses.find((x) => x.id === selected) || buses[0];
+
+  // Dedicated Driver Experience
+  if (sess.user.role === "driver") {
+    return (
+      <DriverDashboard
+        sess={sess}
+        logout={logout}
+        buses={buses}
+        timeMode={timeMode}
+        setTimeMode={setTimeMode}
+        socket={socket}
+      />
+    );
+  }
 
   const handleBusSwitch = (busId) => {
     setSelected(busId);
