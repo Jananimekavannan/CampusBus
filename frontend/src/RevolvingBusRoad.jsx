@@ -1,13 +1,12 @@
 import React, { useEffect, useRef } from "react";
 
 /**
- * RevolvingBusRoad - High-Performance Canvas Component
- * Renders a clean, realistic continuous racetrack road encircling the login card:
- * - A continuous asphalt road precisely surrounding the login box
- * - Double yellow center lines, white dashed lane markings, and zebra crosswalks
- * - An animated KIT Bus continuously revolving around the login box along the road
- * - Smooth headlights casting light cones, tail brake lights, and physics-based turning
- * - Decorative corner campus trees & streetlights
+ * RevolvingBusRoad - High-Performance 3D Realistic Canvas Component
+ * Renders a photorealistic continuous racetrack road encircling the login box:
+ * - 3D textured asphalt roadway with concrete curbs, reflective double yellow lines, and lane dashes
+ * - Photorealistic 3D top-down KIT College Bus with beveled metallic body, roof AC, glass windshield, side mirrors
+ * - Dynamic forward headlight light cones projecting onto the asphalt, glowing red taillights, and blinking turn signals
+ * - Lush corner tree canopies with foliage gradients, shadows, and campus streetlights
  * - Supports Day ☀️ and Night 🌙 modes
  */
 export default function RevolvingBusRoad({ timeMode = "night" }) {
@@ -34,108 +33,138 @@ export default function RevolvingBusRoad({ timeMode = "night" }) {
     // Theme color palette
     const theme = isDay
       ? {
-          bg: "#f1f5f9",
-          lawn: "#3b7a42",
-          lawnSub: "#2e6934",
-          road: "#334155",
-          roadBorder: "#475569",
+          bg: "#e2e8f0",
+          lawn: "#2e7d32",
+          lawnSub: "#1b5e20",
+          lawnHighlight: "#4caf50",
+          pavement: "#94a3b8",
+          pavementBorder: "#64748b",
+          road: "#2d3748",
+          roadBorder: "#4a5568",
           roadLine: "#eab308",
-          laneLine: "rgba(255, 255, 255, 0.85)",
+          laneLine: "rgba(255, 255, 255, 0.9)",
           crosswalk: "rgba(255, 255, 255, 0.95)",
           treeDark: "#1b5e20",
+          treeMid: "#2e7d32",
           treeLight: "#4caf50",
-          treeShadow: "rgba(0,0,0,0.15)",
+          treeShadow: "rgba(0, 0, 0, 0.18)",
           streetLamp: "rgba(255, 255, 255, 0)",
         }
       : {
-          bg: "#090e17",
-          lawn: "#0b1712",
-          lawnSub: "#08120e",
-          road: "#161f2e",
-          roadBorder: "#27354a",
-          roadLine: "rgba(250, 204, 21, 0.75)",
-          laneLine: "rgba(255, 255, 255, 0.3)",
-          crosswalk: "rgba(255, 255, 255, 0.5)",
-          treeDark: "#081c12",
-          treeLight: "#103822",
-          treeShadow: "rgba(0,0,0,0.6)",
-          streetLamp: "rgba(255, 215, 120, 0.4)",
+          bg: "#050a12",
+          lawn: "#08150f",
+          lawnSub: "#050e0a",
+          lawnHighlight: "#0f2b1c",
+          pavement: "#0f172a",
+          pavementBorder: "#1e293b",
+          road: "#121a27",
+          roadBorder: "#1f2c42",
+          roadLine: "rgba(250, 204, 21, 0.85)",
+          laneLine: "rgba(255, 255, 255, 0.35)",
+          crosswalk: "rgba(255, 255, 255, 0.55)",
+          treeDark: "#05140b",
+          treeMid: "#0a2415",
+          treeLight: "#134226",
+          treeShadow: "rgba(0, 0, 0, 0.65)",
+          streetLamp: "rgba(255, 215, 120, 0.45)",
         };
 
-    // Construct the closed racetrack path points around the center
-    function buildRacetrackPoints(cx, cy, rw, rh, cornerRadius, segments = 240) {
+    // Construct smooth racetrack path points around the login card
+    function buildRacetrackPoints(cx, cy, rw, rh, cornerRadius, segments = 360) {
       const pts = [];
-      // Half dimensions of the track center
       const hw = rw / 2;
       const hh = rh / 2;
       const cr = cornerRadius;
 
-      // 4 straight segments and 4 rounded arc corners
-      // Top right corner arc
-      for (let i = 0; i <= segments / 4; i++) {
-        const t = (i / (segments / 4)) * (Math.PI / 2);
-        // From top straight to right straight
-      }
-
-      // Generate parametric points along rounded rectangle perimeter
       for (let i = 0; i < segments; i++) {
         const u = (i / segments) * 4; // 0..4
-        let x, y;
+        let x, y, isCorner = false;
         if (u < 1) {
           // Top edge (left to right)
           const f = u;
-          x = cx - hw + cr + f * (rw - 2 * cr);
-          y = cy - hh;
-          if (f > 0.85) {
-            const angle = -Math.PI / 2 + (f - 0.85) / 0.15 * (Math.PI / 2);
+          if (f < 0.15) {
+            const angle = Math.PI + (f / 0.15) * (Math.PI / 2);
+            x = cx - hw + cr + Math.cos(angle) * cr;
+            y = cy - hh + cr + Math.sin(angle) * cr;
+            isCorner = true;
+          } else if (f > 0.85) {
+            const angle = -Math.PI / 2 + ((f - 0.85) / 0.15) * (Math.PI / 2);
             x = cx + hw - cr + Math.cos(angle) * cr;
             y = cy - hh + cr + Math.sin(angle) * cr;
+            isCorner = true;
+          } else {
+            const linearF = (f - 0.15) / 0.7;
+            x = cx - hw + cr + linearF * (rw - 2 * cr);
+            y = cy - hh;
           }
         } else if (u < 2) {
           // Right edge (top to bottom)
           const f = u - 1;
-          x = cx + hw;
-          y = cy - hh + cr + f * (rh - 2 * cr);
-          if (f > 0.85) {
-            const angle = 0 + (f - 0.85) / 0.15 * (Math.PI / 2);
+          if (f < 0.15) {
+            const angle = 0 + (f / 0.15) * (Math.PI / 2);
+            x = cx + hw - cr + Math.cos(angle) * cr;
+            y = cy - hh + cr + Math.sin(angle) * cr;
+            isCorner = true;
+          } else if (f > 0.85) {
+            const angle = 0 + (Math.PI / 2) + ((f - 0.85) / 0.15) * (Math.PI / 2);
             x = cx + hw - cr + Math.cos(angle) * cr;
             y = cy + hh - cr + Math.sin(angle) * cr;
+            isCorner = true;
+          } else {
+            const linearF = (f - 0.15) / 0.7;
+            x = cx + hw;
+            y = cy - hh + cr + linearF * (rh - 2 * cr);
           }
         } else if (u < 3) {
           // Bottom edge (right to left)
           const f = u - 2;
-          x = cx + hw - cr - f * (rw - 2 * cr);
-          y = cy + hh;
-          if (f > 0.85) {
-            const angle = Math.PI / 2 + (f - 0.85) / 0.15 * (Math.PI / 2);
+          if (f < 0.15) {
+            const angle = Math.PI / 2 + (f / 0.15) * (Math.PI / 2);
+            x = cx + hw - cr + Math.cos(angle) * cr;
+            y = cy + hh - cr + Math.sin(angle) * cr;
+            isCorner = true;
+          } else if (f > 0.85) {
+            const angle = Math.PI + ((f - 0.85) / 0.15) * (Math.PI / 2);
             x = cx - hw + cr + Math.cos(angle) * cr;
             y = cy + hh - cr + Math.sin(angle) * cr;
+            isCorner = true;
+          } else {
+            const linearF = (f - 0.15) / 0.7;
+            x = cx + hw - cr - linearF * (rw - 2 * cr);
+            y = cy + hh;
           }
         } else {
           // Left edge (bottom to top)
           const f = u - 3;
-          x = cx - hw;
-          y = cy + hh - cr - f * (rh - 2 * cr);
-          if (f > 0.85) {
-            const angle = Math.PI + (f - 0.85) / 0.15 * (Math.PI / 2);
+          if (f < 0.15) {
+            const angle = Math.PI + (f / 0.15) * (Math.PI / 2);
+            x = cx - hw + cr + Math.cos(angle) * cr;
+            y = cy + hh - cr + Math.sin(angle) * cr;
+            isCorner = true;
+          } else if (f > 0.85) {
+            const angle = (3 * Math.PI) / 2 + ((f - 0.85) / 0.15) * (Math.PI / 2);
             x = cx - hw + cr + Math.cos(angle) * cr;
             y = cy - hh + cr + Math.sin(angle) * cr;
+            isCorner = true;
+          } else {
+            const linearF = (f - 0.15) / 0.7;
+            x = cx - hw;
+            y = cy + hh - cr - linearF * (rh - 2 * cr);
           }
         }
-        pts.push({ x, y });
+        pts.push({ x, y, isCorner });
       }
 
       return pts;
     }
 
-    // Bus state
     let busIndex = 0;
-    const busSpeed = 0.55; // Smooth realistic revolving speed
+    const busSpeed = 0.52; // Calm, realistic driving speed
 
     function render(currentTime) {
       ctx.clearRect(0, 0, width, height);
 
-      // 1. Background Fill
+      // 1. Background Campus Lawn Base
       ctx.fillStyle = theme.bg;
       ctx.fillRect(0, 0, width, height);
 
@@ -147,31 +176,46 @@ export default function RevolvingBusRoad({ timeMode = "night" }) {
       const cardW = isMobile ? Math.min(width - 40, 360) : 460;
       const cardH = isMobile ? 580 : 540;
 
-      const roadMargin = isMobile ? 55 : 85;
+      const roadMargin = isMobile ? 60 : 90;
       const roadW = cardW + roadMargin * 2;
       const roadH = cardH + roadMargin * 2;
-      const cornerRadius = isMobile ? 45 : 65;
-      const asphaltWidth = isMobile ? 48 : 62;
+      const cornerRadius = isMobile ? 50 : 75;
+      const asphaltWidth = isMobile ? 54 : 68;
 
-      // 2. Campus Lawn Island behind and around the road
+      // 2. Landscape Lawns around & behind Road
       ctx.fillStyle = theme.lawn;
       ctx.beginPath();
       ctx.roundRect(
-        cx - roadW / 2 - 50,
-        cy - roadH / 2 - 50,
-        roadW + 100,
-        roadH + 100,
-        cornerRadius + 30
+        cx - roadW / 2 - 60,
+        cy - roadH / 2 - 60,
+        roadW + 120,
+        roadH + 120,
+        cornerRadius + 35
       );
       ctx.fill();
 
-      // Lawn stripes / texture
-      ctx.fillStyle = theme.lawnSub;
-      for (let y = cy - roadH / 2 - 40; y < cy + roadH / 2 + 40; y += 30) {
-        ctx.fillRect(cx - roadW / 2 - 45, y, roadW + 90, 15);
+      // Lawn Grass Grid Lines & Texture
+      ctx.fillStyle = theme.lawnHighlight;
+      for (let y = cy - roadH / 2 - 50; y < cy + roadH / 2 + 50; y += 36) {
+        ctx.fillRect(cx - roadW / 2 - 55, y, roadW + 110, 18);
       }
 
-      // 3. Draw Continuous Asphalt Road encircling the login box
+      // 3. Sidewalk / Paved Border
+      ctx.fillStyle = theme.pavement;
+      ctx.beginPath();
+      ctx.roundRect(
+        cx - (roadW + asphaltWidth + 24) / 2,
+        cy - (roadH + asphaltWidth + 24) / 2,
+        roadW + asphaltWidth + 24,
+        roadH + asphaltWidth + 24,
+        cornerRadius + (asphaltWidth + 24) / 2
+      );
+      ctx.fill();
+      ctx.strokeStyle = theme.pavementBorder;
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      // 4. Heavy Asphalt Roadway
       ctx.strokeStyle = theme.road;
       ctx.lineWidth = asphaltWidth;
       ctx.lineJoin = "round";
@@ -187,9 +231,9 @@ export default function RevolvingBusRoad({ timeMode = "night" }) {
       );
       ctx.stroke();
 
-      // Road Curbs / Borders
+      // Outer & Inner Curbs with 3D Bevel
       ctx.strokeStyle = theme.roadBorder;
-      ctx.lineWidth = 2;
+      ctx.lineWidth = 2.5;
       ctx.beginPath();
       ctx.roundRect(
         cx - (roadW + asphaltWidth) / 2,
@@ -203,114 +247,143 @@ export default function RevolvingBusRoad({ timeMode = "night" }) {
         cy - (roadH - asphaltWidth) / 2,
         roadW - asphaltWidth,
         roadH - asphaltWidth,
-        Math.max(10, cornerRadius - asphaltWidth / 2)
+        Math.max(12, cornerRadius - asphaltWidth / 2)
       );
       ctx.stroke();
 
-      // Double Yellow Center Line
+      // Double Solid Thermoplastic Yellow Center Lines
       ctx.strokeStyle = theme.roadLine;
-      ctx.lineWidth = 1.8;
+      ctx.lineWidth = 2;
       ctx.beginPath();
       ctx.roundRect(
-        cx - roadW / 2,
-        cy - roadH / 2,
-        roadW,
-        roadH,
-        cornerRadius
+        cx - (roadW - 2) / 2,
+        cy - (roadH - 2) / 2,
+        roadW - 2,
+        roadH - 2,
+        cornerRadius - 1
+      );
+      ctx.roundRect(
+        cx - (roadW + 2) / 2,
+        cy - (roadH + 2) / 2,
+        roadW + 2,
+        roadH + 2,
+        cornerRadius + 1
       );
       ctx.stroke();
 
       // White Dashed Lane Dividers (Outer & Inner Lanes)
       ctx.strokeStyle = theme.laneLine;
-      ctx.lineWidth = 1.2;
-      ctx.setLineDash([10, 14]);
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([12, 16]);
       ctx.beginPath();
       ctx.roundRect(
-        cx - (roadW + asphaltWidth * 0.45) / 2,
-        cy - (roadH + asphaltWidth * 0.45) / 2,
-        roadW + asphaltWidth * 0.45,
-        roadH + asphaltWidth * 0.45,
-        cornerRadius + 12
+        cx - (roadW + asphaltWidth * 0.5) / 2,
+        cy - (roadH + asphaltWidth * 0.5) / 2,
+        roadW + asphaltWidth * 0.5,
+        roadH + asphaltWidth * 0.5,
+        cornerRadius + 14
       );
       ctx.roundRect(
-        cx - (roadW - asphaltWidth * 0.45) / 2,
-        cy - (roadH - asphaltWidth * 0.45) / 2,
-        roadW - asphaltWidth * 0.45,
-        roadH - asphaltWidth * 0.45,
-        Math.max(10, cornerRadius - 12)
+        cx - (roadW - asphaltWidth * 0.5) / 2,
+        cy - (roadH - asphaltWidth * 0.5) / 2,
+        roadW - asphaltWidth * 0.5,
+        roadH - asphaltWidth * 0.5,
+        Math.max(10, cornerRadius - 14)
       );
       ctx.stroke();
       ctx.setLineDash([]);
 
-      // Zebra Crosswalks at Top & Bottom entrance
+      // Zebra Crosswalks at Top & Bottom Gateways
       const drawCrosswalk = (x, y, vertical = false) => {
         ctx.fillStyle = theme.crosswalk;
         for (let i = 0; i < 7; i++) {
           if (vertical) {
-            ctx.fillRect(x - 18 + i * 5.5, y - 20, 3.5, 40);
+            ctx.fillRect(x - 22 + i * 6.5, y - 24, 4, 48);
           } else {
-            ctx.fillRect(x - 20, y - 18 + i * 5.5, 40, 3.5);
+            ctx.fillRect(x - 24, y - 22 + i * 6.5, 48, 4);
           }
         }
       };
       drawCrosswalk(cx, cy - roadH / 2, true);
       drawCrosswalk(cx, cy + roadH / 2, true);
 
-      // 4. Corner Campus Trees
-      const cornerOffsets = [
-        { x: cx - roadW / 2 - 35, y: cy - roadH / 2 - 35, r: 20 },
-        { x: cx + roadW / 2 + 35, y: cy - roadH / 2 - 35, r: 22 },
-        { x: cx + roadW / 2 + 35, y: cy + roadH / 2 + 35, r: 20 },
-        { x: cx - roadW / 2 - 35, y: cy + roadH / 2 + 35, r: 22 },
-        // Side mid trees
-        { x: cx - roadW / 2 - 45, y: cy, r: 18 },
-        { x: cx + roadW / 2 + 45, y: cy, r: 18 },
+      // Bus Stop Marking: "KIT BUS BAY"
+      ctx.fillStyle = isDay ? "rgba(234, 179, 8, 0.4)" : "rgba(250, 204, 21, 0.25)";
+      ctx.strokeStyle = "#f59e0b";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.roundRect(cx - 75, cy + roadH / 2 + asphaltWidth * 0.15, 150, 20, 5);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = isDay ? "#78350f" : "#fbbf24";
+      ctx.font = "bold 9px Inter, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("🚌 KIT CAMPUS TRANSIT BAY", cx, cy + roadH / 2 + asphaltWidth * 0.15 + 13);
+
+      // 5. Clustered 3D Canopy Trees around the Road
+      const trees = [
+        { x: cx - roadW / 2 - 42, y: cy - roadH / 2 - 42, r: 24 },
+        { x: cx + roadW / 2 + 42, y: cy - roadH / 2 - 42, r: 26 },
+        { x: cx + roadW / 2 + 42, y: cy + roadH / 2 + 42, r: 24 },
+        { x: cx - roadW / 2 - 42, y: cy + roadH / 2 + 42, r: 26 },
+        { x: cx - roadW / 2 - 50, y: cy, r: 20 },
+        { x: cx + roadW / 2 + 50, y: cy, r: 20 },
+        { x: cx, y: cy - roadH / 2 - 48, r: 18 },
       ];
 
-      cornerOffsets.forEach((t) => {
+      trees.forEach((t) => {
+        // Shadow
         ctx.fillStyle = theme.treeShadow;
         ctx.beginPath();
-        ctx.arc(t.x + 4, t.y + 5, t.r * 1.1, 0, Math.PI * 2);
+        ctx.arc(t.x + 5, t.y + 6, t.r * 1.15, 0, Math.PI * 2);
         ctx.fill();
 
+        // Dark foliage layer
         ctx.fillStyle = theme.treeDark;
         ctx.beginPath();
         ctx.arc(t.x, t.y, t.r, 0, Math.PI * 2);
         ctx.fill();
 
+        // Mid foliage layer
+        ctx.fillStyle = theme.treeMid;
+        ctx.beginPath();
+        ctx.arc(t.x - t.r * 0.2, t.y - t.r * 0.2, t.r * 0.75, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Highlight layer
         ctx.fillStyle = theme.treeLight;
         ctx.beginPath();
-        ctx.arc(t.x - t.r * 0.25, t.y - t.r * 0.25, t.r * 0.65, 0, Math.PI * 2);
+        ctx.arc(t.x - t.r * 0.35, t.y - t.r * 0.35, t.r * 0.45, 0, Math.PI * 2);
         ctx.fill();
       });
 
-      // 5. Street Lamps at 4 corners of the road
+      // 6. Modern LED Streetlamps with Glowing Light Pools
       const lamps = [
-        { x: cx - roadW / 2 - 15, y: cy - roadH / 2 - 15 },
-        { x: cx + roadW / 2 + 15, y: cy - roadH / 2 - 15 },
-        { x: cx + roadW / 2 + 15, y: cy + roadH / 2 + 15 },
-        { x: cx - roadW / 2 - 15, y: cy + roadH / 2 + 15 },
+        { x: cx - roadW / 2 - 20, y: cy - roadH / 2 - 20 },
+        { x: cx + roadW / 2 + 20, y: cy - roadH / 2 - 20 },
+        { x: cx + roadW / 2 + 20, y: cy + roadH / 2 + 20 },
+        { x: cx - roadW / 2 - 20, y: cy + roadH / 2 + 20 },
       ];
 
       if (!isDay) {
         lamps.forEach((lamp) => {
-          const glow = ctx.createRadialGradient(lamp.x, lamp.y, 2, lamp.x, lamp.y, 45);
+          const glow = ctx.createRadialGradient(lamp.x, lamp.y, 2, lamp.x, lamp.y, 50);
           glow.addColorStop(0, theme.streetLamp);
           glow.addColorStop(1, "rgba(255, 200, 100, 0)");
           ctx.fillStyle = glow;
           ctx.beginPath();
-          ctx.arc(lamp.x, lamp.y, 45, 0, Math.PI * 2);
+          ctx.arc(lamp.x, lamp.y, 50, 0, Math.PI * 2);
           ctx.fill();
 
           ctx.fillStyle = "#fef08a";
           ctx.beginPath();
-          ctx.arc(lamp.x, lamp.y, 3.5, 0, Math.PI * 2);
+          ctx.arc(lamp.x, lamp.y, 4, 0, Math.PI * 2);
           ctx.fill();
         });
       }
 
-      // 6. Calculate Current Bus Position along the Racetrack Path
-      // Generate spline points
+      // 7. Calculate Bus Position along the Racetrack Path
       const spline = buildRacetrackPoints(cx, cy, roadW, roadH, cornerRadius, 360);
       busIndex = (busIndex + busSpeed) % spline.length;
 
@@ -320,113 +393,148 @@ export default function RevolvingBusRoad({ timeMode = "night" }) {
       const next = spline[nextIdx];
       const angle = Math.atan2(next.y - cur.y, next.x - cur.x);
 
-      // 7. Render Revolving KIT Bus
-      const busLen = isMobile ? 42 : 52;
-      const busW = isMobile ? 18 : 22;
+      // 8. Render Realistic 3D Top-Down KIT Bus
+      const busLen = isMobile ? 48 : 58;
+      const busW = isMobile ? 20 : 25;
 
       ctx.save();
       ctx.translate(cur.x, cur.y);
       ctx.rotate(angle);
 
-      // Bus Drop Shadow
-      ctx.fillStyle = "rgba(0, 0, 0, 0.45)";
+      // Bus Ground Drop Shadow
+      ctx.fillStyle = "rgba(0, 0, 0, 0.55)";
       ctx.beginPath();
-      ctx.roundRect(-busLen / 2 + 4, -busW / 2 + 4, busLen, busW, 6);
+      ctx.roundRect(-busLen / 2 + 5, -busW / 2 + 5, busLen, busW, 6);
       ctx.fill();
 
-      // Forward Headlight Beams (Night Mode)
+      // Headlight Beams (Night Mode) - Luminous Cones lighting up road
       if (!isDay) {
         const lightCone = ctx.createRadialGradient(
           busLen / 2,
           0,
           2,
-          busLen / 2 + 75,
+          busLen / 2 + 85,
           0,
-          85
+          95
         );
-        lightCone.addColorStop(0, "rgba(254, 240, 138, 0.7)");
-        lightCone.addColorStop(0.5, "rgba(253, 224, 71, 0.25)");
+        lightCone.addColorStop(0, "rgba(254, 240, 138, 0.85)");
+        lightCone.addColorStop(0.45, "rgba(253, 224, 71, 0.35)");
         lightCone.addColorStop(1, "rgba(253, 224, 71, 0)");
 
         ctx.fillStyle = lightCone;
         ctx.beginPath();
         ctx.moveTo(busLen / 2, -busW / 2 + 2);
-        ctx.lineTo(busLen / 2 + 85, -busW * 1.5);
-        ctx.lineTo(busLen / 2 + 85, busW * 1.5);
+        ctx.lineTo(busLen / 2 + 95, -busW * 1.6);
+        ctx.lineTo(busLen / 2 + 95, busW * 1.6);
         ctx.lineTo(busLen / 2, busW / 2 - 2);
         ctx.closePath();
         ctx.fill();
 
-        // Tail Lights Glow (Red)
+        // Tail Brake Lights Red Pools
         const tailGlow = ctx.createRadialGradient(
           -busLen / 2 - 4,
           0,
           2,
-          -busLen / 2 - 12,
+          -busLen / 2 - 14,
           0,
-          20
+          24
         );
-        tailGlow.addColorStop(0, "rgba(239, 68, 68, 0.75)");
+        tailGlow.addColorStop(0, "rgba(239, 68, 68, 0.85)");
         tailGlow.addColorStop(1, "rgba(239, 68, 68, 0)");
         ctx.fillStyle = tailGlow;
         ctx.beginPath();
-        ctx.arc(-busLen / 2 - 6, 0, 20, 0, Math.PI * 2);
+        ctx.arc(-busLen / 2 - 8, 0, 24, 0, Math.PI * 2);
         ctx.fill();
       }
 
-      // Bus Main Chassis (Yellow)
+      // Bus Main Body (Metallic Yellow with 3D Bevel)
       ctx.fillStyle = "#fbbf24";
       ctx.beginPath();
       ctx.roundRect(-busLen / 2, -busW / 2, busLen, busW, 6);
       ctx.fill();
       ctx.strokeStyle = "#b45309";
-      ctx.lineWidth = 1.4;
+      ctx.lineWidth = 1.5;
       ctx.stroke();
 
-      // KIT Red Stripe
-      ctx.fillStyle = "#b91c1c";
-      ctx.fillRect(-busLen / 2 + 6, -busW / 2, busLen - 12, 3);
-      ctx.fillRect(-busLen / 2 + 6, busW / 2 - 3, busLen - 12, 3);
+      // 3D Roof Highlight bevel
+      ctx.fillStyle = "rgba(255, 255, 255, 0.35)";
+      ctx.fillRect(-busLen / 2 + 8, -busW / 2 + 2, busLen - 16, 2);
 
-      // Windshield
+      // KIT Crimson Red Stripe
+      ctx.fillStyle = "#c01823";
+      ctx.fillRect(-busLen / 2 + 6, -busW / 2, busLen - 12, 3.5);
+      ctx.fillRect(-busLen / 2 + 6, busW / 2 - 3.5, busLen - 12, 3.5);
+
+      // Front Curved Windshield
       ctx.fillStyle = "#0f172a";
       ctx.beginPath();
-      ctx.roundRect(busLen / 2 - 11, -busW / 2 + 3, 8, busW - 6, 2);
+      ctx.roundRect(busLen / 2 - 12, -busW / 2 + 3, 9, busW - 6, 2.5);
       ctx.fill();
 
+      // Windshield Sun Glare
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.6)";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(busLen / 2 - 9, -busW / 2 + 5);
+      ctx.lineTo(busLen / 2 - 5, busW / 2 - 5);
+      ctx.stroke();
+
       // Rear Window
-      ctx.fillRect(-busLen / 2 + 3, -busW / 2 + 4, 4, busW - 8);
+      ctx.fillStyle = "#0f172a";
+      ctx.fillRect(-busLen / 2 + 3, -busW / 2 + 4, 4.5, busW - 8);
 
-      // Roof AC Unit
+      // Roof Air Conditioning Unit
       ctx.fillStyle = "#ffffff";
-      ctx.fillRect(-8, -busW / 2 + 4, 16, busW - 8);
+      ctx.fillRect(-10, -busW / 2 + 5, 20, busW - 10);
       ctx.strokeStyle = "#cbd5e1";
-      ctx.lineWidth = 0.8;
-      ctx.strokeRect(-8, -busW / 2 + 4, 16, busW - 8);
+      ctx.lineWidth = 1;
+      ctx.strokeRect(-10, -busW / 2 + 5, 20, busW - 10);
 
-      // Roof Badge "KIT"
+      // Roof AC Ventilation Slits
+      ctx.strokeStyle = "#94a3b8";
+      ctx.lineWidth = 0.8;
+      for (let sl = -6; sl <= 6; sl += 3) {
+        ctx.beginPath();
+        ctx.moveTo(sl, -busW / 2 + 7);
+        ctx.lineTo(sl, busW / 2 - 7);
+        ctx.stroke();
+      }
+
+      // Roof Top Branding: "KIT"
       ctx.fillStyle = "#1e3a8a";
-      ctx.font = "bold 9px Inter, sans-serif";
+      ctx.font = "bold 9.5px Inter, sans-serif";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.fillText("KIT-01", 0, 0);
 
-      // Front Headlight Dots
+      // Aerodynamic Side Mirrors
+      ctx.fillStyle = "#0f172a";
+      ctx.fillRect(busLen / 2 - 14, -busW / 2 - 4, 4, 4);
+      ctx.fillRect(busLen / 2 - 14, busW / 2, 4, 4);
+
+      // Front LED Headlights
       ctx.fillStyle = "#fef08a";
-      ctx.fillRect(busLen / 2 - 2, -busW / 2 + 2, 2.5, 3);
-      ctx.fillRect(busLen / 2 - 2, busW / 2 - 5, 2.5, 3);
+      ctx.fillRect(busLen / 2 - 2, -busW / 2 + 2, 2.5, 3.5);
+      ctx.fillRect(busLen / 2 - 2, busW / 2 - 5.5, 2.5, 3.5);
 
-      // Rear Brake Light Dots
-      ctx.fillStyle = "#dc2626";
-      ctx.fillRect(-busLen / 2, -busW / 2 + 2, 2.5, 3);
-      ctx.fillRect(-busLen / 2, busW / 2 - 5, 2.5, 3);
+      // Rear LED Taillights
+      ctx.fillStyle = "#ef4444";
+      ctx.fillRect(-busLen / 2, -busW / 2 + 2, 2.5, 3.5);
+      ctx.fillRect(-busLen / 2, busW / 2 - 5.5, 2.5, 3.5);
 
-      // Beacon Pulse above Bus
+      // Amber Turn Signals (Blinking when navigating curves)
+      if (cur.isCorner && Math.floor(currentTime / 250) % 2 === 0) {
+        ctx.fillStyle = "#f59e0b";
+        ctx.fillRect(busLen / 2 - 4, -busW / 2 - 1, 3, 2);
+        ctx.fillRect(busLen / 2 - 4, busW / 2 - 1, 3, 2);
+      }
+
+      // Live GPS Beacon Ring above bus
       const pulse = (Math.sin(currentTime * 0.006) + 1) * 0.5;
       ctx.beginPath();
-      ctx.arc(0, 0, 14 + pulse * 6, 0, Math.PI * 2);
-      ctx.strokeStyle = `rgba(56, 189, 248, ${0.4 - pulse * 0.3})`;
-      ctx.lineWidth = 1.5;
+      ctx.arc(0, 0, 16 + pulse * 6, 0, Math.PI * 2);
+      ctx.strokeStyle = `rgba(56, 189, 248, ${0.45 - pulse * 0.35})`;
+      ctx.lineWidth = 1.8;
       ctx.stroke();
 
       ctx.restore();
