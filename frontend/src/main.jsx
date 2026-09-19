@@ -4,6 +4,8 @@ import { io } from "socket.io-client";
 import axios from "axios";
 import SplashScreen from "./SplashScreen";
 import RevolvingBusRoad from "./RevolvingBusRoad";
+import AmbientBackground from "./AmbientBackground";
+import LiveHeaderTimeWeather from "./LiveHeaderTimeWeather";
 import CoimbatoreTransitMap from "./CoimbatoreTransitMap";
 import StudentTelemetryWidget from "./StudentTelemetryWidget";
 import RoutesExplorerView from "./RoutesExplorerView";
@@ -77,6 +79,9 @@ function Login({ onLogin, timeMode, setTimeMode }) {
 
   return (
     <div className={`login-page ${timeMode}`}>
+      {/* Animated Ambient Background (Aurora Mesh Orbs, Cyber Grid & Laser Radar) */}
+      <AmbientBackground timeMode={timeMode} />
+
       {/* Revolving Road & Revolving KIT Bus encircling the login box */}
       <RevolvingBusRoad timeMode={timeMode} />
 
@@ -365,6 +370,9 @@ function Dashboard({ sess, logout, timeMode, setTimeMode }) {
 
   return (
     <div className={`app-container ${timeMode}`}>
+      {/* Animated Ambient Background (Aurora Mesh Orbs, Cyber Grid & Laser Radar) */}
+      <AmbientBackground timeMode={timeMode} />
+
       {/* Left Sidebar Navigation */}
       <aside className="sidebar-nav">
         {/* Perfectly Fitted Official KIT Coimbatore Logo */}
@@ -475,6 +483,9 @@ function Dashboard({ sess, logout, timeMode, setTimeMode }) {
           </div>
 
           <div className="header-actions">
+            {/* Live Clock & Coimbatore Weather Cluster */}
+            <LiveHeaderTimeWeather />
+
             {/* Day / Night Switcher */}
             <div className="theme-toggle-pill">
               <button

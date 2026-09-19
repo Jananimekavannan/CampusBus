@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
+import AmbientBackground from "./AmbientBackground";
+import LiveHeaderTimeWeather from "./LiveHeaderTimeWeather";
 import CoimbatoreTransitMap from "./CoimbatoreTransitMap";
 import kitLogo from "./assets/kit-logo.png";
 
@@ -172,6 +174,9 @@ export default function AdminDashboard({
 
   return (
     <div className={`app-container admin-theme ${timeMode}`}>
+      {/* Animated Ambient Background (Aurora Mesh Orbs, Cyber Grid & Laser Radar) */}
+      <AmbientBackground timeMode={timeMode} />
+
       {/* Admin Left Sidebar Navigation */}
       <aside className="sidebar-nav admin-sidebar">
         {/* Official KIT Logo Emblem & Branding */}
@@ -279,6 +284,9 @@ export default function AdminDashboard({
           </div>
 
           <div className="header-actions">
+            {/* Live Clock & Coimbatore Weather Cluster */}
+            <LiveHeaderTimeWeather />
+
             {/* Day / Night Switcher */}
             <div className="theme-toggle-pill">
               <button

@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
+import AmbientBackground from "./AmbientBackground";
+import LiveHeaderTimeWeather from "./LiveHeaderTimeWeather";
 import CoimbatoreTransitMap from "./CoimbatoreTransitMap";
 import kitLogo from "./assets/kit-logo.png";
 
@@ -171,6 +173,9 @@ export default function DriverDashboard({
 
   return (
     <div className={`app-container driver-theme ${timeMode}`}>
+      {/* Animated Ambient Background (Aurora Mesh Orbs, Cyber Grid & Laser Radar) */}
+      <AmbientBackground timeMode={timeMode} />
+
       {/* Driver Left Sidebar */}
       <aside className="sidebar-nav driver-sidebar">
         <div className="sidebar-brand-box">
@@ -249,6 +254,9 @@ export default function DriverDashboard({
           </div>
 
           <div className="header-actions">
+            {/* Live Clock & Coimbatore Weather Cluster */}
+            <LiveHeaderTimeWeather />
+
             {/* Day / Night Switcher */}
             <div className="theme-toggle-pill">
               <button
