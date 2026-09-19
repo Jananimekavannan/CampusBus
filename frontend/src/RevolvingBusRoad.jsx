@@ -342,40 +342,7 @@ export default function RevolvingBusRoad({ timeMode = "night" }) {
       ctx.stroke();
       ctx.setLineDash([]);
 
-      // 6. Coimbatore Transit Route Waypoints symmetrically placed
-      const waypoints = [
-        { name: "📍 Peelamedu Hub", x: cx - roadW / 2, y: cy, dist: "3.2km" },
-        { name: "📍 Singanallur", x: cx + roadW / 2, y: cy, dist: "8.4km" },
-        { name: "📍 Sulur RTO", x: cx, y: cy + roadH / 2 + 18, dist: "11.1km" },
-        { name: "🏫 KIT Campus Central", x: cx, y: cy - roadH / 2 - 20, isKit: true, dist: "Terminal" },
-      ];
-
-      waypoints.forEach((wp) => {
-        ctx.fillStyle = wp.isKit ? "#c01823" : theme.waypointBg;
-        ctx.beginPath();
-        ctx.arc(wp.x, wp.y, wp.isKit ? 9 : 6.5, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Pulsing Ping
-        const ping = (Math.sin(currentTime * 0.005) + 1) * 0.5;
-        ctx.strokeStyle = wp.isKit ? "rgba(192, 24, 35, 0.7)" : "rgba(2, 132, 199, 0.7)";
-        ctx.lineWidth = 1.5;
-        ctx.beginPath();
-        ctx.arc(wp.x, wp.y, (wp.isKit ? 9 : 6.5) + ping * 8, 0, Math.PI * 2);
-        ctx.stroke();
-
-        // Waypoint Label & Distance Subtext
-        ctx.fillStyle = wp.isKit ? "#fca5a5" : "#93c5fd";
-        ctx.font = wp.isKit ? "bold 11px sans-serif" : "bold 9.5px sans-serif";
-        ctx.textAlign = "center";
-        ctx.fillText(wp.name, wp.x, wp.y - 12);
-
-        ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
-        ctx.font = "8px monospace";
-        ctx.fillText(wp.dist, wp.x, wp.y + 16);
-      });
-
-      // 7. Render Buses Exactly on the Racetrack Spline
+      // 6. Render Buses Exactly on the Racetrack Spline
       const spline = buildExactRacetrackSpline(cx, cy, roadW, roadH, cornerRadius, 400);
 
       fleet.forEach((busData) => {
