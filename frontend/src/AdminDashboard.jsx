@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import CoimbatoreTransitMap from "./CoimbatoreTransitMap";
 import kitLogo from "./assets/kit-logo.png";
@@ -24,32 +24,49 @@ export default function AdminDashboard({
   const [broadcastSent, setBroadcastSent] = useState(false);
   const [notice, setNotice] = useState("");
 
-  const headers = { Authorization: "Bearer " + sess.token };
+  const headers = useMemo(
+    () => ({ Authorization: "Bearer " + sess.token }),
+    [sess.token]
+  );
 
-  // Fetch initial messages from API
+  // Fetch messages from API
+  const fetchMessages = async () => {
+    try {
+      const r = await axios.get(`${API}/api/admin/messages`, { headers });
+      setMessages(r.data);
+    } catch (e) {
+      console.warn("Could not load messages:", e.message);
+    }
+  };
+
   useEffect(() => {
-    axios
-      .get(`${API}/api/admin/messages`, { headers })
-      .then((r) => setMessages(r.data))
-      .catch((e) => console.warn("Could not load messages:", e.message));
+    fetchMessages();
+    const interval = setInterval(fetchMessages, 3000);
 
-    // Listen for real-time incoming messages from students & drivers
-    socket.on("admin:message", (newMsg) => {
-      setMessages((prev) => [newMsg, ...prev]);
+    const handleMessage = (newMsg) => {
+      setMessages((prev) => {
+        if (prev.some((m) => m.id === newMsg.id)) return prev;
+        return [newMsg, ...prev];
+      });
       setNotice(
-        `🚨 New ${newMsg.category?.toUpperCase()} message from ${newMsg.senderName} (${newMsg.busId?.toUpperCase()})`
+        `🚨 New ${newMsg.category?.toUpperCase() || "MESSAGE"} from ${newMsg.senderName} (${newMsg.busId?.toUpperCase() || "KIT FLEET"})`
       );
-    });
+    };
 
-    socket.on("admin:sos", (sosAlert) => {
+    const handleSos = (sosAlert) => {
       setNotice(
         `🚨 URGENT SOS ALERT: ${sosAlert.studentName} on Bus ${sosAlert.busId}!`
       );
-    });
+      fetchMessages();
+    };
+
+    socket.on("admin:message", handleMessage);
+    socket.on("admin:sos", handleSos);
 
     return () => {
-      socket.off("admin:message");
-      socket.off("admin:sos");
+      clearInterval(interval);
+      socket.off("admin:message", handleMessage);
+      socket.off("admin:sos", handleSos);
     };
   }, [socket, headers]);
 
@@ -109,18 +126,25 @@ export default function AdminDashboard({
 
   // Filter messages
   const filteredMessages = messages.filter((m) => {
+    const sName = (m.senderName || "").toLowerCase();
+    const sTitle = (m.title || "").toLowerCase();
+    const sContent = (m.content || "").toLowerCase();
+    const sBus = (m.busId || "").toLowerCase();
+    const q = (searchTerm || "").toLowerCase().trim();
+
     const matchesSearch =
-      m.senderName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      m.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      m.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      m.busId.toLowerCase().includes(searchTerm.toLowerCase());
+      !q ||
+      sName.includes(q) ||
+      sTitle.includes(q) ||
+      sContent.includes(q) ||
+      sBus.includes(q);
 
     if (inboxFilter === "all") return matchesSearch;
-    if (inboxFilter === "sos") return matchesSearch && m.category === "sos";
+    if (inboxFilter === "sos") return matchesSearch && (m.category === "sos" || m.category === "emergency");
     if (inboxFilter === "traffic")
       return (
         matchesSearch &&
-        (m.category === "traffic" || m.category === "breakdown")
+        (m.category === "traffic" || m.category === "breakdown" || m.senderType === "driver")
       );
     if (inboxFilter === "query")
       return (
@@ -132,9 +156,13 @@ export default function AdminDashboard({
   });
 
   const unreadCount = messages.filter((m) => m.status === "unread").length;
-  const sosCount = messages.filter((m) => m.category === "sos" && m.status === "unread").length;
+  const sosCount = messages.filter(
+    (m) => (m.category === "sos" || m.category === "emergency") && m.status === "unread"
+  ).length;
   const trafficCount = messages.filter(
-    (m) => (m.category === "traffic" || m.category === "breakdown") && m.status === "unread"
+    (m) =>
+      (m.category === "traffic" || m.category === "breakdown" || m.senderType === "driver") &&
+      m.status === "unread"
   ).length;
   const queryCount = messages.filter(
     (m) => (m.category === "query" || m.senderType === "student") && m.status === "unread"

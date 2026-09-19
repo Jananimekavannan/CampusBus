@@ -130,16 +130,39 @@ export default function DriverDashboard({
     }
   };
 
-  // Report Delay / Incident
-  const handleReportIncident = (type) => {
+  // Report Delay / Incident / Message to Admin
+  const handleReportIncident = async (type) => {
     setIncidentSent(true);
-    socket.emit("admin:incident", {
+    const content = delayNotice || `${type} reported near ${currentStop?.name || "Transit Route"} by ${sess.user.name}`;
+    const payload = {
       busId: userBusId,
       driverName: sess.user.name,
       type,
-      note: delayNotice || `${type} reported near ${currentStop?.name}`,
+      note: content,
       time: new Date().toISOString(),
-    });
+    };
+    socket.emit("admin:incident", payload);
+
+    try {
+      await axios.post(
+        `${API}/api/messages`,
+        {
+          category: type?.toLowerCase().includes("traffic")
+            ? "traffic"
+            : type?.toLowerCase().includes("emergency")
+            ? "sos"
+            : "breakdown",
+          title: `⚠️ Driver Road Advisory: ${type} (${bus?.name})`,
+          content: content,
+          busId: userBusId,
+        },
+        { headers }
+      );
+    } catch (e) {
+      console.warn("Driver message post error:", e.message);
+    }
+
+    setNotice(`Alert dispatched to Transport Control Room: ${type}`);
     setTimeout(() => {
       setIncidentSent(false);
       setDelayNotice("");

@@ -12,6 +12,7 @@ import BusScheduleView from "./BusScheduleView";
 import DriverDashboard from "./DriverDashboard";
 import AdminDashboard from "./AdminDashboard";
 import SosModal from "./SosModal";
+import StudentMessageModal from "./StudentMessageModal";
 import kitLogo from "./assets/kit-logo.png";
 import "./styles.css";
 import "leaflet/dist/leaflet.css";
@@ -259,6 +260,7 @@ function Dashboard({ sess, logout, timeMode, setTimeMode }) {
   const [notice, setNotice] = useState("");
   const [selectedStop, setSelectedStop] = useState(null);
   const [isSosOpen, setIsSosOpen] = useState(false);
+  const [isMsgModalOpen, setIsMsgModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("tracking"); // 'tracking', 'routes', 'announcements', 'schedule', 'admin'
 
   const headers = useMemo(
@@ -424,6 +426,13 @@ function Dashboard({ sess, logout, timeMode, setTimeMode }) {
             <span className="nav-icon">⏰</span>
             <span>Bus Timetable</span>
           </button>
+          <button
+            className="nav-item student-message-nav-btn"
+            onClick={() => setIsMsgModalOpen(true)}
+          >
+            <span className="nav-icon">💬</span>
+            <span>Message Admin</span>
+          </button>
           {sess.user.role === "admin" && (
             <button
               className={`nav-item ${activeTab === "admin" ? "active" : ""}`}
@@ -489,6 +498,14 @@ function Dashboard({ sess, logout, timeMode, setTimeMode }) {
               <span className={`status-dot ${trip === "active" ? "active" : ""}`} />
               <span>{trip === "active" ? "GPS STREAMING LIVE" : "STANDBY"}</span>
             </div>
+
+            {/* Top Message Admin Button */}
+            <button
+              className="top-msg-trigger-btn"
+              onClick={() => setIsMsgModalOpen(true)}
+            >
+              💬 Message Admin
+            </button>
 
             {/* Top SOS Button */}
             <button
@@ -698,6 +715,16 @@ function Dashboard({ sess, logout, timeMode, setTimeMode }) {
         bus={bus}
         user={sess.user}
         token={sess.token}
+      />
+
+      {/* Student to Admin Direct Message Modal */}
+      <StudentMessageModal
+        isOpen={isMsgModalOpen}
+        onClose={() => setIsMsgModalOpen(false)}
+        user={sess.user}
+        token={sess.token}
+        buses={buses}
+        currentBusId={selected}
       />
     </div>
   );
