@@ -40,16 +40,32 @@ export default function SplashScreen({ onFinish }) {
 
   return (
     <div className="splash-screen tech-splash">
-      {/* 1. High-Tech Cyber Radar Background with Orbital Satellites & Waypoints */}
+      {/* 1. High-Tech Cyber Radar Background & Laser Scanner */}
       <div className="splash-tech-bg">
+        {/* Scanning Laser Beam */}
+        <div className="splash-laser-scanner" />
+
         {/* Radar Matrix Coordinate Grid */}
         <div className="splash-radar-grid" />
 
-        {/* Floating Coimbatore Transit Waypoint Constellation */}
+        {/* Floating Telemetry Coordinates Streamers */}
+        <div className="splash-telemetry-streamers left-streamer">
+          <span>LAT: 10.9922° N</span>
+          <span>LNG: 77.0864° E</span>
+          <span>CORRIDOR: NH-544</span>
+        </div>
+        <div className="splash-telemetry-streamers right-streamer">
+          <span>FREQ: 433.92 MHz</span>
+          <span>FLEET: 7 ONLINE</span>
+          <span>ENCRYPTION: TLS-256</span>
+        </div>
+
+        {/* Floating Coimbatore Transit Waypoint Constellation with Interactive Energy Pulse */}
         <div className="splash-waypoints-strip">
           <div className="wp-node wp-1">
             <span className="wp-dot" />
             <span className="wp-text">Gandhipuram</span>
+            <span className="wp-badge">Hub</span>
           </div>
           <div className="wp-line" />
           <div className="wp-node wp-2">
@@ -70,16 +86,24 @@ export default function SplashScreen({ onFinish }) {
           <div className="wp-node wp-5 active-kit">
             <span className="wp-dot kit-dot" />
             <span className="wp-text">KIT Campus</span>
+            <span className="wp-badge kit-badge">Terminal</span>
           </div>
         </div>
 
         {/* Ambient Glowing Aurora Mesh Orbs */}
         <div className="splash-glow-orb orb-left" />
         <div className="splash-glow-orb orb-right" />
+        <div className="splash-glow-orb orb-center" />
       </div>
 
-      {/* 2. Centered Branding: High-Tech Glassmorphic HUD Card */}
+      {/* 2. Centered Branding: High-Tech Glassmorphic HUD Card with Cyber-Corners */}
       <div className="splash-center-content tech-card">
+        {/* Cyber Corner HUD Brackets */}
+        <div className="hud-corner hud-corner-tl" />
+        <div className="hud-corner hud-corner-tr" />
+        <div className="hud-corner hud-corner-bl" />
+        <div className="hud-corner hud-corner-br" />
+
         {/* Telemetry Corner Tags */}
         <div className="splash-card-hud-strip">
           <span className="hud-tag">
@@ -89,10 +113,11 @@ export default function SplashScreen({ onFinish }) {
           <span className="hud-tag">FLEET: 7 ONLINE</span>
         </div>
 
-        {/* KIT Coimbatore Logo with Rotating Radar Compass Rings */}
+        {/* KIT Coimbatore Logo with Rotating Gyroscopic Radar Rings */}
         <div className="splash-logo-wrap tech-logo">
           <div className="splash-radar-sweep-ring" />
           <div className="splash-outer-hud-ring" />
+          <div className="splash-compass-ring" />
           <div className="splash-logo-halo" />
           <img src={kitLogo} alt="KIT Coimbatore Logo" className="splash-logo-img" />
         </div>
@@ -122,6 +147,22 @@ export default function SplashScreen({ onFinish }) {
           <div className="splash-loading-status">
             <span className="splash-status-phrase">{getStatusText(progress)}</span>
             <b className="splash-percent-num">{progress}%</b>
+          </div>
+
+          {/* Subsystem Verification Matrix Badges */}
+          <div className="splash-subsystems-matrix">
+            <span className={`subsystem-pill ${progress >= 20 ? "active" : ""}`}>
+              <span className="subsystem-led" /> GPS: LOCKED
+            </span>
+            <span className={`subsystem-pill ${progress >= 45 ? "active" : ""}`}>
+              <span className="subsystem-led" /> RADAR: 360°
+            </span>
+            <span className={`subsystem-pill ${progress >= 70 ? "active" : ""}`}>
+              <span className="subsystem-led" /> FLEET: 7 BUSES
+            </span>
+            <span className={`subsystem-pill ${progress >= 90 ? "active" : ""}`}>
+              <span className="subsystem-led" /> SOCKET: SYNCED
+            </span>
           </div>
         </div>
       </div>

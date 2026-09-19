@@ -85,8 +85,15 @@ function Login({ onLogin, timeMode, setTimeMode }) {
       {/* Revolving Road & Revolving KIT Bus encircling the login box */}
       <RevolvingBusRoad timeMode={timeMode} />
 
-      {/* Top Bar: Day / Night Switcher */}
+      {/* Top Bar: Live GPS Coordinates, Status & Theme Switcher */}
       <div className="login-topbar">
+        <div className="login-live-telemetry-badge">
+          <span className="live-gps-dot" />
+          <span className="live-gps-text">
+            KIT GPS: <b>10.9922°N, 77.0864°E</b> • 5G WEBSOCKET ACTIVE • FLEET: 7 ONLINE
+          </span>
+        </div>
+
         <div className="theme-pill-group">
           <button
             type="button"
@@ -107,12 +114,19 @@ function Login({ onLogin, timeMode, setTimeMode }) {
         </div>
       </div>
 
-      {/* Center Hero: Login Card with Integrated Clean Fitted Logo */}
+      {/* Center Hero: Login Card with Integrated Clean Fitted Logo & Cyber Brackets */}
       <div className="login-center-wrapper">
         <div className="login-card-glow-aura" />
         <div className="login-card">
+          {/* Cyber Corner Brackets */}
+          <div className="hud-corner hud-corner-tl" />
+          <div className="hud-corner hud-corner-tr" />
+          <div className="hud-corner hud-corner-bl" />
+          <div className="hud-corner hud-corner-br" />
+
           <div className="login-header-logo-badge">
             <div className="login-logo-glow-ring" />
+            <div className="login-logo-compass-ring" />
             <img src={kitLogo} alt="KIT Coimbatore Logo" className="login-kit-logo-img" />
           </div>
           <span className="institution-tag">KIT COIMBATORE • AUTONOMOUS</span>
@@ -238,6 +252,13 @@ function Login({ onLogin, timeMode, setTimeMode }) {
                 🛡️ Admin
               </button>
             </div>
+          </div>
+
+          {/* Telemetry Footer */}
+          <div className="login-card-telemetry-footer">
+            <span>🛡️ TLS 256-BIT ENCRYPTED</span>
+            <span>•</span>
+            <span>SOCKET.IO REALTIME CLUSTER</span>
           </div>
         </div>
       </div>
