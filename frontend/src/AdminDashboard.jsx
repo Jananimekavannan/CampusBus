@@ -36,11 +36,15 @@ export default function AdminDashboard({
     // Listen for real-time incoming messages from students & drivers
     socket.on("admin:message", (newMsg) => {
       setMessages((prev) => [newMsg, ...prev]);
-      setNotice(`New ${newMsg.category?.toUpperCase()} message received from ${newMsg.senderName}!`);
+      setNotice(
+        `🚨 New ${newMsg.category?.toUpperCase()} message from ${newMsg.senderName} (${newMsg.busId?.toUpperCase()})`
+      );
     });
 
     socket.on("admin:sos", (sosAlert) => {
-      setNotice(`🚨 URGENT SOS ALERT from ${sosAlert.studentName} on Bus ${sosAlert.busId}!`);
+      setNotice(
+        `🚨 URGENT SOS ALERT: ${sosAlert.studentName} on Bus ${sosAlert.busId}!`
+      );
     });
 
     return () => {
@@ -56,7 +60,8 @@ export default function AdminDashboard({
       setMessages((prev) =>
         prev.map((m) => (m.id === msgId ? { ...m, status: "resolved" } : m))
       );
-      setNotice("Message marked as Resolved.");
+      setNotice("Alert marked as Handled & Resolved.");
+      setTimeout(() => setNotice(""), 4000);
     } catch (e) {
       console.error(e);
     }
@@ -67,7 +72,8 @@ export default function AdminDashboard({
     try {
       await axios.delete(`${API}/api/admin/messages/${msgId}`, { headers });
       setMessages((prev) => prev.filter((m) => m.id !== msgId));
-      setNotice("Message dismissed.");
+      setNotice("Alert dismissed from queue.");
+      setTimeout(() => setNotice(""), 3000);
     } catch (e) {
       console.error(e);
     }
@@ -89,12 +95,13 @@ export default function AdminDashboard({
         { headers }
       );
       setBroadcastSent(true);
-      setNotice("Official Announcement broadcasted to all Student and Driver portals!");
+      setNotice("Official Announcement broadcasted to all student and driver portals!");
       setTimeout(() => {
         setBroadcastTitle("");
         setBroadcastDesc("");
         setBroadcastSent(false);
-      }, 3500);
+        setNotice("");
+      }, 4000);
     } catch (e) {
       setNotice(e.response?.data?.message || "Failed to publish broadcast.");
     }
@@ -116,18 +123,30 @@ export default function AdminDashboard({
         (m.category === "traffic" || m.category === "breakdown")
       );
     if (inboxFilter === "query")
-      return matchesSearch && (m.category === "query" || m.senderType === "student");
+      return (
+        matchesSearch &&
+        (m.category === "query" || m.senderType === "student")
+      );
 
     return matchesSearch;
   });
 
   const unreadCount = messages.filter((m) => m.status === "unread").length;
+  const sosCount = messages.filter((m) => m.category === "sos" && m.status === "unread").length;
+  const trafficCount = messages.filter(
+    (m) => (m.category === "traffic" || m.category === "breakdown") && m.status === "unread"
+  ).length;
+  const queryCount = messages.filter(
+    (m) => (m.category === "query" || m.senderType === "student") && m.status === "unread"
+  ).length;
+
   const selectedBus = buses.find((b) => b.id === selectedBusId) || buses[0];
 
   return (
     <div className={`app-container admin-theme ${timeMode}`}>
       {/* Admin Left Sidebar Navigation */}
       <aside className="sidebar-nav admin-sidebar">
+        {/* Official KIT Logo Emblem & Branding */}
         <div className="sidebar-brand-box">
           <div className="brand-logo-container">
             <div className="brand-logo-glow" />
@@ -139,11 +158,11 @@ export default function AdminDashboard({
           </div>
           <div className="brand-titles">
             <h2>KIT COIMBATORE</h2>
-            <p>Fleet Transport Control Room</p>
+            <p>Transport Command Center</p>
           </div>
         </div>
 
-        {/* Admin Profile Badge */}
+        {/* Admin User Profile Badge */}
         <div className="user-profile-badge admin-badge">
           <div className="user-avatar-circle admin-avatar">🛡️</div>
           <div className="user-profile-info">
@@ -187,24 +206,36 @@ export default function AdminDashboard({
           </button>
         </nav>
 
-        {/* Fleet Status Summary Pill */}
+        {/* Fleet Quick Status Card */}
         <div className="admin-fleet-quick-summary">
+          <div className="summary-title-row">
+            <span className="pulse-dot" />
+            <span>FLEET STATUS LIVE</span>
+          </div>
           <div className="summary-row">
-            <small>Active Fleet</small>
-            <b>{buses.length} / {buses.length} Vehicles</b>
+            <small>Active Vehicles</small>
+            <b>{buses.length} / {buses.length} Online</b>
           </div>
           <div className="summary-row">
             <small>Total Capacity</small>
             <b>364 Seats</b>
           </div>
           <div className="summary-row">
-            <small>GPS Network</small>
-            <span className="gps-live-tag">● 100% Online</span>
+            <small>GPS Geofence</small>
+            <span className="gps-live-tag">Coimbatore Zone</span>
           </div>
         </div>
 
+        {/* Emergency Quick Dispatch & Sign Out */}
+        <div className="sidebar-emergency-card">
+          <div className="sos-pill-label">CAMPUS SECURITY DESK</div>
+          <a href="tel:+914222367890" className="sidebar-sos-btn">
+            <span>🚨</span> Control Room Hotline
+          </a>
+        </div>
+
         <button className="sidebar-logout-btn" onClick={logout}>
-          <span>🚪</span> Sign Out
+          <span>🚪</span> Sign Out Admin
         </button>
       </aside>
 
@@ -213,7 +244,7 @@ export default function AdminDashboard({
         {/* Top Header */}
         <header className="dashboard-top-header admin-header">
           <div>
-            <span className="admin-eyebrow">
+            <span className="institution-subtitle admin-eyebrow">
               KALAIGNARKARUNANIDHI INSTITUTE OF TECHNOLOGY • TRANSPORT DIVISION
             </span>
             <h1>Central Fleet Intelligence Command</h1>
@@ -241,97 +272,128 @@ export default function AdminDashboard({
             {/* Live Operations Indicator */}
             <div className="status-live-chip admin-chip">
               <span className="status-dot active" />
-              <span>RADAR COMMAND ACTIVE</span>
+              <span>RADAR LIVE • 100% ONLINE</span>
             </div>
           </div>
         </header>
 
+        {/* Floating Notice Banner */}
         {notice && (
           <div className="notice-banner admin-notice-banner">
-            <span>ℹ️</span> {notice}
+            <span>🔔</span> <span>{notice}</span>
           </div>
         )}
+
+        {/* Command HUD Metric Cards */}
+        <section className="admin-kpi-metrics-grid">
+          <div className="admin-kpi-card fleet-kpi">
+            <div className="kpi-icon-wrap">🚍</div>
+            <div className="kpi-details">
+              <small>ACTIVE FLEET DEPLOYED</small>
+              <b>{buses.length} Vehicles</b>
+              <span>100% Dual-Band GPS Online</span>
+            </div>
+          </div>
+
+          <div className={`admin-kpi-card sos-kpi ${sosCount > 0 ? "alert-glow" : ""}`}>
+            <div className="kpi-icon-wrap sos-icon">🚨</div>
+            <div className="kpi-details">
+              <small>ACTIVE SOS BROADCASTS</small>
+              <b className={sosCount > 0 ? "text-danger" : ""}>{sosCount} Urgent</b>
+              <span>{sosCount === 0 ? "All Clear & Safe" : "Immediate Response Required"}</span>
+            </div>
+          </div>
+
+          <div className="admin-kpi-card driver-kpi">
+            <div className="kpi-icon-wrap traffic-icon">⚠️</div>
+            <div className="kpi-details">
+              <small>DRIVER ROAD ADVISORIES</small>
+              <b>{trafficCount} Reported</b>
+              <span>Traffic Delays & Mechanical</span>
+            </div>
+          </div>
+
+          <div className="admin-kpi-card query-kpi">
+            <div className="kpi-icon-wrap student-icon">💬</div>
+            <div className="kpi-details">
+              <small>STUDENT INQUIRIES</small>
+              <b>{queryCount} Pending</b>
+              <span>Pickup & Stop Inquiries</span>
+            </div>
+          </div>
+        </section>
 
         {/* TAB 1: LIVE INBOX & DISPATCH MESSAGES */}
         {activeTab === "inbox" && (
           <div className="tab-pane-fade-in admin-inbox-section">
-            {/* Inbox Header & Summary */}
+            {/* Inbox Header Hero */}
             <div className="inbox-header-hero">
-              <div>
-                <span className="inbox-badge-tag">REAL-TIME DISPATCH DISK</span>
+              <div className="inbox-header-left">
+                <span className="inbox-badge-tag">REAL-TIME DISPATCH DESK</span>
                 <h2>Driver & Student Live Communications Inbox</h2>
                 <p>
-                  Receive real-time Emergency SOS alerts, driver road incident
-                  reports, traffic delays, and student transit inquiries.
+                  Centralized dispatch queue receiving student Emergency SOS alerts, driver road incident
+                  reports, mechanical updates, and student transit requests.
                 </p>
               </div>
 
               <div className="inbox-stats-cluster">
-                <div className="inbox-stat-item">
-                  <b>{messages.length}</b>
-                  <small>Total Alerts</small>
+                <div className="inbox-stat-chip">
+                  <span className="chip-num">{messages.length}</span>
+                  <span className="chip-lbl">Total Alerts</span>
                 </div>
-                <div className="inbox-stat-item unread">
-                  <b>{unreadCount}</b>
-                  <small>Action Required</small>
+                <div className="inbox-stat-chip sos">
+                  <span className="chip-num">{unreadCount}</span>
+                  <span className="chip-lbl">Action Req.</span>
                 </div>
-                <div className="inbox-stat-item resolved">
-                  <b>{messages.length - unreadCount}</b>
-                  <small>Resolved</small>
+                <div className="inbox-stat-chip resolved">
+                  <span className="chip-num">{messages.length - unreadCount}</span>
+                  <span className="chip-lbl">Resolved</span>
                 </div>
               </div>
             </div>
 
             {/* Filter & Search Toolbar */}
             <div className="inbox-toolbar">
-              <div className="inbox-search-wrap">
-                <span>🔍</span>
-                <input
-                  type="text"
-                  placeholder="Search sender, student name, driver, bus #, or message text..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-                {searchTerm && (
-                  <button
-                    className="clear-search-btn"
-                    onClick={() => setSearchTerm("")}
-                  >
-                    ✕
-                  </button>
-                )}
-              </div>
-
               <div className="inbox-filter-pills">
                 <button
-                  className={`filter-btn ${inboxFilter === "all" ? "active" : ""}`}
+                  className={`inbox-filter-btn ${inboxFilter === "all" ? "active" : ""}`}
                   onClick={() => setInboxFilter("all")}
                 >
                   All Messages ({messages.length})
                 </button>
                 <button
-                  className={`filter-btn sos ${inboxFilter === "sos" ? "active" : ""}`}
+                  className={`inbox-filter-btn ${inboxFilter === "sos" ? "active" : ""}`}
                   onClick={() => setInboxFilter("sos")}
                 >
-                  🚨 Student SOS Alerts
+                  🚨 Student SOS ({messages.filter((m) => m.category === "sos").length})
                 </button>
                 <button
-                  className={`filter-btn traffic ${inboxFilter === "traffic" ? "active" : ""}`}
+                  className={`inbox-filter-btn ${inboxFilter === "traffic" ? "active" : ""}`}
                   onClick={() => setInboxFilter("traffic")}
                 >
-                  ⚠️ Driver Road Incidents
+                  ⚠️ Driver Incidents ({messages.filter((m) => m.category === "traffic" || m.category === "breakdown").length})
                 </button>
                 <button
-                  className={`filter-btn query ${inboxFilter === "query" ? "active" : ""}`}
+                  className={`inbox-filter-btn ${inboxFilter === "query" ? "active" : ""}`}
                   onClick={() => setInboxFilter("query")}
                 >
-                  💬 Student Queries
+                  💬 Student Queries ({messages.filter((m) => m.category === "query" || m.senderType === "student").length})
                 </button>
+              </div>
+
+              <div className="inbox-search-box">
+                <input
+                  type="text"
+                  placeholder="🔍 Search alerts, driver, student, bus..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
               </div>
             </div>
 
-            {/* Message Cards List */}
-            <div className="inbox-messages-list">
+            {/* Message Cards Stream */}
+            <div className="inbox-messages-stream">
               {filteredMessages.map((msg) => {
                 const isSos = msg.category === "sos";
                 const isTraffic = msg.category === "traffic" || msg.category === "breakdown";
@@ -340,82 +402,80 @@ export default function AdminDashboard({
                 return (
                   <div
                     key={msg.id}
-                    className={`inbox-message-card ${
-                      isSos ? "sos-card" : isTraffic ? "traffic-card" : "query-card"
-                    } ${isUnread ? "unread" : "resolved"}`}
+                    className={`inbox-msg-card ${
+                      isSos
+                        ? "sos-alert-card"
+                        : isTraffic
+                        ? "driver-incident-card"
+                        : "student-query-card"
+                    }`}
                   >
-                    <div className="msg-card-sidebar">
-                      <div className="msg-sender-avatar">
-                        {msg.senderType === "driver" ? "👨‍✈️" : "🎓"}
-                      </div>
-                      <span className={`msg-role-pill ${msg.senderType}`}>
-                        {msg.senderType?.toUpperCase()}
-                      </span>
-                    </div>
-
-                    <div className="msg-card-content">
-                      <div className="msg-card-header">
-                        <div className="msg-title-group">
-                          <h4>{msg.title}</h4>
-                          <div className="msg-meta-row">
-                            <span className="msg-sender-name">
-                              From: <b>{msg.senderName}</b>
+                    <div className="inbox-msg-header">
+                      <div className="inbox-sender-meta">
+                        <div className="inbox-sender-avatar">
+                          {msg.senderType === "driver" ? "👨‍✈️" : isSos ? "🚨" : "🎓"}
+                        </div>
+                        <div className="inbox-sender-details">
+                          <div className="sender-headline">
+                            <b>{msg.senderName}</b>
+                            <span className={`inbox-sender-role ${msg.senderType}`}>
+                              {msg.senderType?.toUpperCase()}
                             </span>
-                            <span className="msg-bus-tag">
+                            <span className="msg-bus-badge">
                               🚍 {msg.busId?.toUpperCase()}
                             </span>
-                            <span className="msg-timestamp">
-                              🕒 {new Date(msg.time).toLocaleTimeString()}
-                            </span>
                           </div>
-                        </div>
-
-                        <div className="msg-status-badge-wrap">
-                          {isUnread ? (
-                            <span className="msg-status-pill unread">
-                              ● Action Required
-                            </span>
-                          ) : (
-                            <span className="msg-status-pill resolved">
-                              ✓ Resolved
-                            </span>
-                          )}
-                        </div>
-                      </div>
-
-                      <p className="msg-body-text">{msg.content}</p>
-
-                      <div className="msg-action-footer">
-                        {isUnread ? (
-                          <button
-                            className="btn-mark-resolve"
-                            onClick={() => handleResolveMessage(msg.id)}
-                          >
-                            ✓ Mark as Resolved
-                          </button>
-                        ) : (
-                          <span className="resolved-note">
-                            ✓ Handled by Transport Dispatch
+                          <span className="inbox-sender-sub">
+                            Category: {msg.category?.toUpperCase()} • Alert ID: {msg.id}
                           </span>
-                        )}
-
-                        {isSos && (
-                          <a
-                            href="tel:+914222367890"
-                            className="btn-dispatch-security"
-                          >
-                            🚨 Call Main Security Desk
-                          </a>
-                        )}
-
-                        <button
-                          className="btn-dismiss-msg"
-                          onClick={() => handleDeleteMessage(msg.id)}
-                          title="Dismiss message"
-                        >
-                          🗑️ Dismiss
-                        </button>
+                        </div>
                       </div>
+
+                      <div className="inbox-header-badges">
+                        <span className={`inbox-status-pill ${isUnread ? "new" : "resolved"}`}>
+                          {isUnread ? "● Action Required" : "✓ Resolved"}
+                        </span>
+                        <span className="inbox-time-text">
+                          🕒 {new Date(msg.time).toLocaleTimeString()}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="inbox-msg-body">
+                      <h4>{msg.title}</h4>
+                      <p>{msg.content}</p>
+                    </div>
+
+                    <div className="inbox-msg-footer">
+                      {isSos && (
+                        <a
+                          href="tel:+914222367890"
+                          className="inbox-action-btn btn-call-security"
+                        >
+                          🚨 Call Campus Security Hotline
+                        </a>
+                      )}
+
+                      {isUnread ? (
+                        <button
+                          className="inbox-action-btn btn-resolve"
+                          onClick={() => handleResolveMessage(msg.id)}
+                        >
+                          ✓ Mark Resolved
+                        </button>
+                      ) : (
+                        <span className="inbox-action-btn btn-resolved-state">
+                          ✓ Handled by Dispatch
+                        </span>
+                      )}
+
+                      <button
+                        className="inbox-action-btn btn-dismiss"
+                        onClick={() => handleDeleteMessage(msg.id)}
+                        title="Dismiss alert"
+                      >
+                        🗑️ Dismiss
+                      </button>
                     </div>
                   </div>
                 );
@@ -423,9 +483,9 @@ export default function AdminDashboard({
 
               {filteredMessages.length === 0 && (
                 <div className="inbox-empty-state">
-                  <div className="empty-icon">📭</div>
-                  <h3>No messages in this filter</h3>
-                  <p>All driver incident reports and student queries are up to date.</p>
+                  <div className="inbox-empty-icon">📭</div>
+                  <h3>No alerts found in this queue</h3>
+                  <p>All emergency SOS broadcasts and driver road incidents are up to date.</p>
                 </div>
               )}
             </div>
@@ -435,12 +495,15 @@ export default function AdminDashboard({
         {/* TAB 2: FLEET OPERATIONS RADAR */}
         {activeTab === "fleet" && (
           <div className="tab-pane-fade-in admin-fleet-section">
-            <div className="fleet-hero-header">
-              <h2>KIT Coimbatore Fleet Radar & Live Status</h2>
-              <p>Multi-vehicle telemetry, real-time cruising coordinates, and route load</p>
+            <div className="admin-section-hero">
+              <div>
+                <span className="routes-badge-tag">CENTRAL FLEET OPERATIONS</span>
+                <h2>KIT Coimbatore Fleet Radar & Live Status</h2>
+                <p>Multi-vehicle telemetry, real-time cruising coordinates, and passenger load</p>
+              </div>
             </div>
 
-            {/* Quick Bus Selector Bar */}
+            {/* Quick Bus Selector Horizontal Bar */}
             <div className="admin-bus-selector-bar">
               {buses.map((b) => (
                 <button
@@ -448,60 +511,75 @@ export default function AdminDashboard({
                   className={`admin-bus-chip ${selectedBusId === b.id ? "active" : ""}`}
                   onClick={() => setSelectedBusId(b.id)}
                 >
-                  <span className="chip-num">{b.number}</span>
-                  <span className="chip-name">{b.name}</span>
-                  <span className="chip-load">
-                    {b.occupancy}/{b.capacity} Seats
-                  </span>
+                  <span className="chip-bus-num">{b.number}</span>
+                  <div className="chip-text-wrap">
+                    <span className="chip-name">{b.name}</span>
+                    <span className="chip-load">
+                      {b.occupancy}/{b.capacity} Seats ({b.capacity - b.occupancy} Free)
+                    </span>
+                  </div>
                 </button>
               ))}
             </div>
 
-            {/* Fleet Operations Grid */}
-            <div className="admin-fleet-grid">
-              <div className="admin-map-wrap">
-                <div className="admin-map-head">
-                  <h3>🛰️ Real-Time Map • {selectedBus?.name}</h3>
-                  <span>{selectedBus?.waypoints?.length || 0} Coimbatore Stops</span>
+            {/* Fleet Operations Grid: Map on Left, Dossier on Right */}
+            <div className="admin-fleet-operations-layout">
+              <div className="admin-map-panel-card">
+                <div className="panel-header-row">
+                  <div>
+                    <h3>🛰️ Radar Tracking • {selectedBus?.name}</h3>
+                    <p className="panel-desc">
+                      Corridor: <b>{selectedBus?.route}</b> ➔ KIT Kannampalayam Campus
+                    </p>
+                  </div>
+                  <span className="total-stops-badge">
+                    {selectedBus?.waypoints?.length || 0} Stops
+                  </span>
                 </div>
-                <CoimbatoreTransitMap
-                  bus={selectedBus}
-                  location={selectedBus?.lastLocation}
-                  timeMode={timeMode}
-                />
+
+                <div className="admin-map-container-wrap">
+                  <CoimbatoreTransitMap
+                    bus={selectedBus}
+                    location={selectedBus?.lastLocation}
+                    timeMode={timeMode}
+                  />
+                </div>
               </div>
 
-              <div className="admin-bus-telemetry-card">
+              <div className="admin-dossier-panel-card">
                 <h3>Vehicle Telemetry Dossier</h3>
-                <div className="dossier-rows">
-                  <div className="dossier-row">
+                <div className="dossier-items-list">
+                  <div className="dossier-item">
                     <span>Route Corridor</span>
                     <b>{selectedBus?.route}</b>
                   </div>
-                  <div className="dossier-row">
+                  <div className="dossier-item">
                     <span>Assigned Driver</span>
                     <b>{selectedBus?.driver?.name}</b>
                   </div>
-                  <div className="dossier-row">
-                    <span>Driver Contact</span>
-                    <a href={`tel:${selectedBus?.driver?.phone}`}>
-                      {selectedBus?.driver?.phone}
+                  <div className="dossier-item">
+                    <span>Driver Phone</span>
+                    <a href={`tel:${selectedBus?.driver?.phone}`} className="phone-dossier-link">
+                      📞 {selectedBus?.driver?.phone}
                     </a>
                   </div>
-                  <div className="dossier-row">
-                    <span>Plate Number</span>
-                    <b className="mono">{selectedBus?.driver?.plateNumber}</b>
+                  <div className="dossier-item">
+                    <span>License Plate</span>
+                    <b className="plate-badge">{selectedBus?.driver?.plateNumber}</b>
                   </div>
-                  <div className="dossier-row">
-                    <span>Seating Load</span>
+                  <div className="dossier-item">
+                    <span>Current Capacity</span>
                     <b>
-                      {selectedBus?.occupancy} / {selectedBus?.capacity} (
-                      {selectedBus?.capacity - selectedBus?.occupancy} available)
+                      {selectedBus?.occupancy} / {selectedBus?.capacity} Seats
                     </b>
                   </div>
-                  <div className="dossier-row">
-                    <span>GPS Signal</span>
-                    <b className="good">Active Dual-Band GPS</b>
+                  <div className="dossier-item">
+                    <span>GPS Telemetry</span>
+                    <b className="gps-good">● Active Dual-Band GPS</b>
+                  </div>
+                  <div className="dossier-item">
+                    <span>Target Destination</span>
+                    <b>KIT Kannampalayam (08:20 AM)</b>
                   </div>
                 </div>
               </div>
@@ -512,9 +590,12 @@ export default function AdminDashboard({
         {/* TAB 3: DRIVERS & VEHICLE REGISTRY */}
         {activeTab === "drivers" && (
           <div className="tab-pane-fade-in admin-drivers-section">
-            <div className="drivers-registry-header">
-              <h2>KIT Campus Driver & Fleet Registry</h2>
-              <p>Certified college bus drivers, driver ratings, and vehicle records</p>
+            <div className="admin-section-hero">
+              <div>
+                <span className="routes-badge-tag">TRANSPORT PERSONNEL ROSTER</span>
+                <h2>KIT Campus Certified Drivers & Vehicle Registry</h2>
+                <p>Active driver roster, contact records, vehicle plate assignments, and safety ratings</p>
+              </div>
             </div>
 
             <div className="registry-table-card">
@@ -527,7 +608,7 @@ export default function AdminDashboard({
                     <th>Vehicle Plate</th>
                     <th>Experience</th>
                     <th>Driver Rating</th>
-                    <th>Action</th>
+                    <th>Operational Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -537,7 +618,10 @@ export default function AdminDashboard({
                         <span className="bus-number-chip">{b.number}</span>
                       </td>
                       <td>
-                        <b>{b.driver?.name}</b>
+                        <div className="driver-name-meta">
+                          <b>{b.driver?.name}</b>
+                          <small>{b.name}</small>
+                        </div>
                       </td>
                       <td>
                         <a href={`tel:${b.driver?.phone}`} className="phone-link">
@@ -549,7 +633,7 @@ export default function AdminDashboard({
                       </td>
                       <td>{b.driver?.experience || "10+ yrs"}</td>
                       <td>
-                        <span className="rating-pill">⭐ {b.driver?.rating || 4.9}</span>
+                        <span className="driver-rating-pill">⭐ {b.driver?.rating || 4.9}</span>
                       </td>
                       <td>
                         <button
@@ -559,7 +643,7 @@ export default function AdminDashboard({
                             setActiveTab("fleet");
                           }}
                         >
-                          🛰️ Track Bus
+                          🛰️ Track Bus on Map
                         </button>
                       </td>
                     </tr>
@@ -573,39 +657,61 @@ export default function AdminDashboard({
         {/* TAB 4: BROADCAST ANNOUNCEMENT CENTER */}
         {activeTab === "broadcast" && (
           <div className="tab-pane-fade-in admin-broadcast-section">
-            <div className="broadcast-hero-header">
-              <h2>Official Fleet Notification Broadcast Center</h2>
-              <p>
-                Publish instant circulars and traffic advisories to all student
-                portals and driver handsets in real-time.
-              </p>
+            <div className="admin-section-hero">
+              <div>
+                <span className="routes-badge-tag">CAMPUS-WIDE COMMUNICATIONS</span>
+                <h2>Official Fleet Notification Broadcast Center</h2>
+                <p>
+                  Publish official transit circulars, route diversions, and weather warnings
+                  directly to all Student and Driver portals in real-time.
+                </p>
+              </div>
             </div>
 
             {broadcastSent && (
-              <div className="broadcast-success-toast">
-                <span>✓</span>
-                <h4>Announcement Broadcasted Live!</h4>
-                <p>All active student sessions and driver devices have received the update.</p>
+              <div className="broadcast-success-banner">
+                <span>✓ Announcement broadcasted successfully to all Student and Driver portals!</span>
               </div>
             )}
 
             <div className="broadcast-form-card">
               <form onSubmit={handlePublishBroadcast} className="admin-broadcast-form">
-                <div className="form-row-group">
+                <div className="form-group">
                   <label>Announcement Category</label>
-                  <select
-                    value={broadcastType}
-                    onChange={(e) => setBroadcastType(e.target.value)}
-                  >
-                    <option value="info">📢 General Advisory / Transport Notice</option>
-                    <option value="traffic">🚦 Live Traffic / Route Diversion</option>
-                    <option value="weather">☀️ Weather & Transit Condition</option>
-                    <option value="emergency">🚨 High-Priority Emergency Circular</option>
-                  </select>
+                  <div className="broadcast-type-selector">
+                    <button
+                      type="button"
+                      className={`broadcast-type-pill ${broadcastType === "info" ? "active" : ""}`}
+                      onClick={() => setBroadcastType("info")}
+                    >
+                      📢 General Notice
+                    </button>
+                    <button
+                      type="button"
+                      className={`broadcast-type-pill ${broadcastType === "traffic" ? "active" : ""}`}
+                      onClick={() => setBroadcastType("traffic")}
+                    >
+                      🚦 Route Diversion
+                    </button>
+                    <button
+                      type="button"
+                      className={`broadcast-type-pill ${broadcastType === "weather" ? "active" : ""}`}
+                      onClick={() => setBroadcastType("weather")}
+                    >
+                      🌧️ Weather Alert
+                    </button>
+                    <button
+                      type="button"
+                      className={`broadcast-type-pill ${broadcastType === "emergency" ? "active" : ""}`}
+                      onClick={() => setBroadcastType("emergency")}
+                    >
+                      🚨 High-Priority Circular
+                    </button>
+                  </div>
                 </div>
 
-                <div className="form-row-group">
-                  <label>Announcement Title</label>
+                <div className="form-group">
+                  <label>Announcement Headline</label>
                   <input
                     type="text"
                     required
@@ -615,19 +721,19 @@ export default function AdminDashboard({
                   />
                 </div>
 
-                <div className="form-row-group">
-                  <label>Detailed Announcement Text</label>
+                <div className="form-group">
+                  <label>Announcement Details & Instructions</label>
                   <textarea
                     rows={4}
                     required
-                    placeholder="Write detailed instructions, departure bays, or timing changes..."
+                    placeholder="Write departure bays, updated timings, or boarding instructions..."
                     value={broadcastDesc}
                     onChange={(e) => setBroadcastDesc(e.target.value)}
                   />
                 </div>
 
-                <button type="submit" className="submit-broadcast-btn">
-                  🚀 Publish Broadcast to All Portals
+                <button type="submit" className="broadcast-submit-btn">
+                  🚀 Publish Instant Broadcast to All Portals
                 </button>
               </form>
             </div>
