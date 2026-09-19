@@ -52,21 +52,20 @@ function createStopIcon(idx, isSelected = false, isPassed = false) {
   });
 }
 
-// KIT College Destination Emblem Pin Icon
+// KIT College Destination Pin Icon (Sleek & Compact)
 const kitDestinationIcon = L.divIcon({
   className: "custom-leaflet-kit-icon",
   html: `
     <div class="map-kit-destination-pin">
-      <div class="map-kit-pulse-halo"></div>
-      <div class="map-kit-crest">
-        <img src="${kitLogo}" alt="KIT College" />
+      <div class="map-kit-crest-small">
+        <span class="kit-pin-icon">🏫</span>
       </div>
-      <div class="map-kit-tag">KIT CAMPUS</div>
+      <div class="map-kit-tag-small">KIT Campus</div>
     </div>
   `,
-  iconSize: [52, 52],
-  iconAnchor: [26, 26],
-  popupAnchor: [0, -30],
+  iconSize: [28, 28],
+  iconAnchor: [14, 14],
+  popupAnchor: [0, -18],
 });
 
 // Map Controller for Smooth Flying and View Centering
