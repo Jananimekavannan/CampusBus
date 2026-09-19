@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 
 /**
  * AerialCampusMap - High-Performance Canvas Component
@@ -8,10 +8,10 @@ import React, { useEffect, useRef, useState } from "react";
  * - Academic blocks, tech parks, solar roofs, library, sports stadium
  * - Canopy trees with soft shadows and foliage texture
  * - Animated KIT Buses (yellow/red livery, "KIT" roof branding, glowing headlights, brake lights, bus stops)
- * - Animated campus traffic (cars, buggies) and crossing pedestrians
- * - Dynamic Day / Golden Dusk / Night lighting modes
+ * - Animated campus traffic (cars, buggies)
+ * - Smooth Day ☀️ and Night 🌙 lighting modes
  */
-export default function AerialCampusMap({ timeMode = "dusk", onBusSelect }) {
+export default function AerialCampusMap({ timeMode = "night" }) {
   const canvasRef = useRef(null);
   const mouseRef = useRef({ x: 0, y: 0, targetX: 0, targetY: 0 });
 
@@ -37,75 +37,57 @@ export default function AerialCampusMap({ timeMode = "dusk", onBusSelect }) {
     };
     window.addEventListener("mousemove", handleMouseMove);
 
-    // Color palettes for different lighting modes
-    const theme = {
-      night: {
-        grass: "#0b1512",
-        grassSub: "#08100e",
-        pavement: "#131b26",
-        road: "#18202c",
-        roadBorder: "#2a3649",
-        roadLine: "rgba(255, 215, 0, 0.6)",
-        laneLine: "rgba(255, 255, 255, 0.25)",
-        crosswalk: "rgba(255, 255, 255, 0.4)",
-        buildingFill: "#15202e",
-        buildingRoof: "#1e2c3f",
-        buildingBorder: "#2c3e55",
-        treeDark: "#092415",
-        treeLight: "#103d24",
-        treeShadow: "rgba(0,0,0,0.6)",
-        ambientLight: "rgba(5, 10, 20, 0.55)",
-        headlight: "rgba(255, 250, 200, 0.65)",
-        streetLamp: "rgba(255, 220, 120, 0.35)",
-        glowColor: "rgba(255, 180, 50, 0.2)",
-      },
-      dusk: {
-        grass: "#16281e",
-        grassSub: "#122119",
-        pavement: "#1d2633",
-        road: "#222c3b",
-        roadBorder: "#3b485c",
-        roadLine: "#eab308",
-        laneLine: "rgba(255, 255, 255, 0.45)",
-        crosswalk: "rgba(255, 255, 255, 0.65)",
-        buildingFill: "#223145",
-        buildingRoof: "#2d3e56",
-        buildingBorder: "#415675",
-        treeDark: "#133821",
-        treeLight: "#205834",
-        treeShadow: "rgba(0,0,0,0.45)",
-        ambientLight: "rgba(30, 20, 45, 0.35)",
-        headlight: "rgba(255, 245, 180, 0.55)",
-        streetLamp: "rgba(255, 200, 90, 0.4)",
-        glowColor: "rgba(255, 150, 50, 0.2)",
-      },
-      day: {
-        grass: "#437849",
-        grassSub: "#3a693f",
-        pavement: "#a5b2c0",
-        road: "#334155",
-        roadBorder: "#64748b",
-        roadLine: "#facc15",
-        laneLine: "rgba(255, 255, 255, 0.8)",
-        crosswalk: "rgba(255, 255, 255, 0.9)",
-        buildingFill: "#cbd5e1",
-        buildingRoof: "#e2e8f0",
-        buildingBorder: "#94a3b8",
-        treeDark: "#1e542d",
-        treeLight: "#347d48",
-        treeShadow: "rgba(0,0,0,0.25)",
-        ambientLight: "rgba(255, 255, 255, 0.05)",
-        headlight: "rgba(255, 255, 200, 0.3)",
-        streetLamp: "rgba(255, 240, 180, 0.15)",
-        glowColor: "rgba(255, 255, 255, 0.1)",
-      },
-    }[timeMode] || {};
+    // Color palettes for Day and Night lighting modes
+    const theme =
+      timeMode === "day"
+        ? {
+            grass: "#3b7a42",
+            grassSub: "#316937",
+            pavement: "#94a3b8",
+            road: "#334155",
+            roadBorder: "#475569",
+            roadLine: "#eab308",
+            laneLine: "rgba(255, 255, 255, 0.85)",
+            crosswalk: "rgba(255, 255, 255, 0.95)",
+            buildingFill: "#e2e8f0",
+            buildingRoof: "#f1f5f9",
+            buildingBorder: "#cbd5e1",
+            buildingText: "#1e293b",
+            treeDark: "#1b5e20",
+            treeLight: "#4caf50",
+            treeShadow: "rgba(0,0,0,0.22)",
+            ambientLight: "rgba(255, 255, 255, 0)",
+            headlight: "rgba(255, 255, 220, 0.25)",
+            streetLamp: "rgba(255, 240, 180, 0.05)",
+            isDay: true,
+          }
+        : {
+            grass: "#0b1512",
+            grassSub: "#08100e",
+            pavement: "#131b26",
+            road: "#18202c",
+            roadBorder: "#2a3649",
+            roadLine: "rgba(255, 215, 0, 0.65)",
+            laneLine: "rgba(255, 255, 255, 0.25)",
+            crosswalk: "rgba(255, 255, 255, 0.4)",
+            buildingFill: "#15202e",
+            buildingRoof: "#1e2c3f",
+            buildingBorder: "#2c3e55",
+            buildingText: "rgba(255, 255, 255, 0.75)",
+            treeDark: "#092415",
+            treeLight: "#103d24",
+            treeShadow: "rgba(0,0,0,0.6)",
+            ambientLight: "rgba(5, 10, 20, 0.55)",
+            headlight: "rgba(255, 250, 200, 0.65)",
+            streetLamp: "rgba(255, 220, 120, 0.35)",
+            isDay: false,
+          };
 
-    // Waypoints for looping bus routes (normalized to 1200x800 coordinate space)
+    // Normalized map coordinate space
     const baseW = 1400;
     const baseH = 900;
 
-    // Helper: generate smooth closed or open spline waypoints
+    // Helper: generate smooth spline waypoints
     function interpolatePath(points, segmentsPerCurve = 25) {
       const result = [];
       const len = points.length;
@@ -116,7 +98,6 @@ export default function AerialCampusMap({ timeMode = "dusk", onBusSelect }) {
         const p3 = points[(i + 2) % len];
 
         for (let t = 0; t < 1; t += 1 / segmentsPerCurve) {
-          // Catmull-Rom spline interpolation
           const t2 = t * t;
           const t3 = t2 * t;
 
@@ -142,11 +123,11 @@ export default function AerialCampusMap({ timeMode = "dusk", onBusSelect }) {
     // Waypoints for Route 1: Campus Perimeter Outer Loop (Bus 12)
     const route1Points = [
       { x: 140, y: 160 },
-      { x: 700, y: 160, stop: true }, // North Bus Stop
+      { x: 700, y: 160, stop: true },
       { x: 1260, y: 160 },
       { x: 1260, y: 450 },
       { x: 1260, y: 740 },
-      { x: 700, y: 740, stop: true }, // South Bus Bay
+      { x: 700, y: 740, stop: true },
       { x: 140, y: 740 },
       { x: 140, y: 450 },
     ];
@@ -159,7 +140,7 @@ export default function AerialCampusMap({ timeMode = "dusk", onBusSelect }) {
       { x: 700, y: 350 },
       { x: 780, y: 380 },
       { x: 820, y: 450 },
-      { x: 1100, y: 450, stop: true }, // Tech Park Stop
+      { x: 1100, y: 450, stop: true },
       { x: 1260, y: 450 },
       { x: 1100, y: 450 },
       { x: 820, y: 450 },
@@ -204,13 +185,13 @@ export default function AerialCampusMap({ timeMode = "dusk", onBusSelect }) {
     const spline3 = interpolatePath(route3Points, 30);
     const spline4 = interpolatePath(route4Points, 28);
 
-    // Bus State Objects
+    // Buses
     const buses = [
       {
         id: "bus12",
         name: "KIT Bus #12",
         route: "Gandhipuram ⇄ KIT Campus",
-        color: "#fbbf24", // College Yellow
+        color: "#fbbf24",
         badge: "KIT-12",
         spline: spline1,
         index: 0,
@@ -218,7 +199,6 @@ export default function AerialCampusMap({ timeMode = "dusk", onBusSelect }) {
         stopTimer: 0,
         width: 22,
         length: 54,
-        headlights: true,
       },
       {
         id: "bus15",
@@ -232,7 +212,6 @@ export default function AerialCampusMap({ timeMode = "dusk", onBusSelect }) {
         stopTimer: 0,
         width: 22,
         length: 52,
-        headlights: true,
       },
       {
         id: "bus21",
@@ -246,13 +225,12 @@ export default function AerialCampusMap({ timeMode = "dusk", onBusSelect }) {
         stopTimer: 0,
         width: 22,
         length: 54,
-        headlights: true,
       },
       {
         id: "bus07",
         name: "KIT Shuttle #07",
         route: "Internal Campus Express",
-        color: "#38bdf8", // Sky blue electric campus shuttle
+        color: "#38bdf8",
         badge: "KIT-07",
         spline: spline4,
         index: Math.floor(spline4.length * 0.2),
@@ -260,7 +238,6 @@ export default function AerialCampusMap({ timeMode = "dusk", onBusSelect }) {
         stopTimer: 0,
         width: 18,
         length: 42,
-        headlights: true,
       },
     ];
 
@@ -270,7 +247,7 @@ export default function AerialCampusMap({ timeMode = "dusk", onBusSelect }) {
         spline: spline1,
         index: Math.floor(spline1.length * 0.6),
         speed: 1.6,
-        color: "#e2e8f0",
+        color: "#f8fafc",
         width: 14,
         length: 28,
       },
@@ -300,7 +277,6 @@ export default function AerialCampusMap({ timeMode = "dusk", onBusSelect }) {
         w: 180,
         h: 120,
         label: "KIT MAIN ADMINISTRATIVE BLOCK",
-        roofColor: "#1e2c3f",
         hasSolar: true,
         hasHelipad: false,
       },
@@ -310,7 +286,6 @@ export default function AerialCampusMap({ timeMode = "dusk", onBusSelect }) {
         w: 220,
         h: 120,
         label: "KIT TECH PARK & INNOVATION LABS",
-        roofColor: "#1a2838",
         hasSolar: true,
         hasHelipad: true,
       },
@@ -320,7 +295,6 @@ export default function AerialCampusMap({ timeMode = "dusk", onBusSelect }) {
         w: 190,
         h: 130,
         label: "MECHANICAL & ROBOTICS BLOCK",
-        roofColor: "#1c2738",
         hasSolar: false,
         hasHelipad: false,
       },
@@ -330,7 +304,6 @@ export default function AerialCampusMap({ timeMode = "dusk", onBusSelect }) {
         w: 210,
         h: 130,
         label: "LIBRARY & AUDITORIUM COMPLEX",
-        roofColor: "#223147",
         hasSolar: true,
         hasHelipad: false,
       },
@@ -340,29 +313,23 @@ export default function AerialCampusMap({ timeMode = "dusk", onBusSelect }) {
         w: 140,
         h: 70,
         label: "STUDENT FOOD COURT",
-        roofColor: "#1c2635",
         hasSolar: false,
         hasHelipad: false,
       },
     ];
 
-    // Procedural Trees with varying radius & foliage layers
+    // Trees
     const trees = [];
     const treeSeeds = [
-      // Cluster near Admin Block
       { cx: 190, cy: 220, count: 8, spread: 50 },
       { cx: 440, cy: 220, count: 6, spread: 40 },
-      // Cluster near Tech Park
       { cx: 830, cy: 220, count: 7, spread: 45 },
       { cx: 1130, cy: 220, count: 8, spread: 55 },
-      // Roundabout lush garden
       { cx: 700, cy: 450, count: 12, spread: 38 },
-      // South sports lawns & trees
       { cx: 190, cy: 620, count: 9, spread: 60 },
       { cx: 450, cy: 570, count: 6, spread: 35 },
       { cx: 830, cy: 620, count: 7, spread: 45 },
       { cx: 1140, cy: 600, count: 10, spread: 60 },
-      // Avenue Tree Rows
       { cx: 400, cy: 110, count: 5, spread: 70 },
       { cx: 1000, cy: 110, count: 5, spread: 70 },
       { cx: 400, cy: 790, count: 5, spread: 70 },
@@ -377,12 +344,11 @@ export default function AerialCampusMap({ timeMode = "dusk", onBusSelect }) {
           x: seed.cx + Math.cos(angle) * dist,
           y: seed.cy + Math.sin(angle) * dist,
           r: 10 + Math.random() * 12,
-          hueOffset: (Math.random() - 0.5) * 10,
         });
       }
     });
 
-    // Street Lamps along roads
+    // Street Lamps
     const streetLamps = [
       { x: 140, y: 160 },
       { x: 420, y: 160 },
@@ -404,19 +370,14 @@ export default function AerialCampusMap({ timeMode = "dusk", onBusSelect }) {
 
     // Bus Stops
     const busStops = [
-      { x: 700, y: 130, name: "KIT North Gate Transit Bay", side: "top" },
-      { x: 1100, y: 420, name: "KIT Tech Park Terminal", side: "top" },
-      { x: 700, y: 770, name: "KIT South Hostel Bay", side: "bottom" },
-      { x: 110, y: 450, name: "West Campus Entrance", side: "left" },
+      { x: 700, y: 130, name: "KIT North Gate Transit Bay" },
+      { x: 1100, y: 420, name: "KIT Tech Park Terminal" },
+      { x: 700, y: 770, name: "KIT South Hostel Bay" },
+      { x: 110, y: 450, name: "West Campus Entrance" },
     ];
 
     // Animation Render Loop
-    let lastTime = performance.now();
-
     function render(currentTime) {
-      const dt = (currentTime - lastTime) / 1000;
-      lastTime = currentTime;
-
       // Smooth mouse parallax
       mouseRef.current.x +=
         (mouseRef.current.targetX - mouseRef.current.x) * 0.05;
@@ -425,7 +386,6 @@ export default function AerialCampusMap({ timeMode = "dusk", onBusSelect }) {
 
       ctx.clearRect(0, 0, width, height);
 
-      // Coordinate scaling from 1400x900 base to current screen
       const scale = Math.max(width / baseW, height / baseH) * 1.05;
       const offsetX = (width - baseW * scale) / 2 + mouseRef.current.x;
       const offsetY = (height - baseH * scale) / 2 + mouseRef.current.y;
@@ -441,10 +401,9 @@ export default function AerialCampusMap({ timeMode = "dusk", onBusSelect }) {
       // Subtle grass lawn grid patches / sports grounds
       ctx.fillStyle = theme.grassSub;
       ctx.beginPath();
-      // Football/Athletics field at top-center
       ctx.roundRect(560, 220, 280, 110, 14);
       ctx.fill();
-      ctx.strokeStyle = "rgba(255,255,255,0.18)";
+      ctx.strokeStyle = theme.isDay ? "rgba(255,255,255,0.4)" : "rgba(255,255,255,0.18)";
       ctx.lineWidth = 1.5;
       ctx.stroke();
 
@@ -458,7 +417,6 @@ export default function AerialCampusMap({ timeMode = "dusk", onBusSelect }) {
       ctx.lineWidth = 18;
       ctx.lineCap = "round";
       ctx.beginPath();
-      // Internal pedestrian spines
       ctx.moveTo(330, 340);
       ctx.lineTo(330, 540);
       ctx.moveTo(990, 340);
@@ -471,9 +429,6 @@ export default function AerialCampusMap({ timeMode = "dusk", onBusSelect }) {
 
       // 3. Roads Network
       const roadWidth = 54;
-      const innerRoadWidth = 40;
-
-      // Draw asphalt base for primary road network
       ctx.strokeStyle = theme.road;
       ctx.lineWidth = roadWidth;
       ctx.lineJoin = "round";
@@ -507,7 +462,7 @@ export default function AerialCampusMap({ timeMode = "dusk", onBusSelect }) {
       ctx.arc(700, 450, 42, 0, Math.PI * 2);
       ctx.fillStyle = theme.treeDark;
       ctx.fill();
-      ctx.strokeStyle = "#38bdf8"; // Water fountain ring
+      ctx.strokeStyle = "#38bdf8";
       ctx.lineWidth = 3;
       ctx.stroke();
 
@@ -543,7 +498,6 @@ export default function AerialCampusMap({ timeMode = "dusk", onBusSelect }) {
       ctx.setLineDash([12, 16]);
       ctx.lineWidth = 1.5;
 
-      // Outer Loop Inner/Outer Lane Dashes
       ctx.beginPath();
       ctx.roundRect(127, 147, 1146, 606, 45);
       ctx.roundRect(153, 173, 1094, 554, 35);
@@ -559,7 +513,7 @@ export default function AerialCampusMap({ timeMode = "dusk", onBusSelect }) {
       ctx.moveTo(778, 463);
       ctx.lineTo(1260, 463);
       ctx.stroke();
-      ctx.setLineDash([]); // Reset dash
+      ctx.setLineDash([]);
 
       // Zebra Crosswalks at Intersections
       const drawCrosswalk = (cx, cy, vertical = false) => {
@@ -585,7 +539,7 @@ export default function AerialCampusMap({ timeMode = "dusk", onBusSelect }) {
 
       // Bus Stop Bays & Shelters
       busStops.forEach((bs) => {
-        ctx.fillStyle = "rgba(251, 191, 36, 0.25)";
+        ctx.fillStyle = theme.isDay ? "rgba(234, 179, 8, 0.4)" : "rgba(251, 191, 36, 0.25)";
         ctx.strokeStyle = "#f59e0b";
         ctx.lineWidth = 1.5;
         ctx.beginPath();
@@ -593,16 +547,16 @@ export default function AerialCampusMap({ timeMode = "dusk", onBusSelect }) {
         ctx.fill();
         ctx.stroke();
 
-        ctx.fillStyle = "#fbbf24";
+        ctx.fillStyle = theme.isDay ? "#78350f" : "#fbbf24";
         ctx.font = "bold 9px Inter, sans-serif";
         ctx.textAlign = "center";
         ctx.fillText("🚌 BUS BAY", bs.x, bs.y + 3);
       });
 
-      // 4. Buildings (Aerial 3D bevel & roofs)
+      // 4. Buildings
       buildings.forEach((b) => {
         // Drop shadow
-        ctx.fillStyle = "rgba(0, 0, 0, 0.4)";
+        ctx.fillStyle = theme.buildingBorder === "#cbd5e1" ? "rgba(0,0,0,0.18)" : "rgba(0, 0, 0, 0.4)";
         ctx.fillRect(b.x + 8, b.y + 10, b.w, b.h);
 
         // Main building roof
@@ -612,29 +566,19 @@ export default function AerialCampusMap({ timeMode = "dusk", onBusSelect }) {
         ctx.lineWidth = 2;
         ctx.strokeRect(b.x, b.y, b.w, b.h);
 
-        // Roof inner bevel / architectural details
+        // Roof inner bevel
         ctx.fillStyle = theme.buildingRoof;
         ctx.fillRect(b.x + 12, b.y + 12, b.w - 24, b.h - 24);
 
-        // Solar panels or rooftop details
+        // Solar panels
         if (b.hasSolar) {
           ctx.fillStyle = "#1e3a8a";
           for (let row = 0; row < 2; row++) {
             for (let col = 0; col < 4; col++) {
-              ctx.fillRect(
-                b.x + 22 + col * 22,
-                b.y + 22 + row * 18,
-                16,
-                12
-              );
-              ctx.strokeStyle = "rgba(255,255,255,0.2)";
+              ctx.fillRect(b.x + 22 + col * 22, b.y + 22 + row * 18, 16, 12);
+              ctx.strokeStyle = "rgba(255,255,255,0.3)";
               ctx.lineWidth = 0.5;
-              ctx.strokeRect(
-                b.x + 22 + col * 22,
-                b.y + 22 + row * 18,
-                16,
-                12
-              );
+              ctx.strokeRect(b.x + 22 + col * 22, b.y + 22 + row * 18, 16, 12);
             }
           }
         }
@@ -643,12 +587,12 @@ export default function AerialCampusMap({ timeMode = "dusk", onBusSelect }) {
         if (b.hasHelipad) {
           const hx = b.x + b.w - 45;
           const hy = b.y + b.h / 2;
-          ctx.strokeStyle = "#e2e8f0";
+          ctx.strokeStyle = theme.isDay ? "#475569" : "#e2e8f0";
           ctx.lineWidth = 2;
           ctx.beginPath();
           ctx.arc(hx, hy, 22, 0, Math.PI * 2);
           ctx.stroke();
-          ctx.fillStyle = "#facc15";
+          ctx.fillStyle = "#f59e0b";
           ctx.font = "bold 16px Inter, sans-serif";
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
@@ -656,14 +600,14 @@ export default function AerialCampusMap({ timeMode = "dusk", onBusSelect }) {
         }
 
         // Building Label
-        ctx.fillStyle = "rgba(255, 255, 255, 0.75)";
-        ctx.font = "600 8.5px Inter, sans-serif";
+        ctx.fillStyle = theme.buildingText;
+        ctx.font = "700 8.5px Inter, sans-serif";
         ctx.textAlign = "center";
         ctx.textBaseline = "alphabetic";
         ctx.fillText(b.label, b.x + b.w / 2, b.y + b.h - 8);
       });
 
-      // 5. Trees (Lush Canopy with Soft Shadows & Highlights)
+      // 5. Trees
       trees.forEach((t) => {
         // Shadow
         ctx.fillStyle = theme.treeShadow;
@@ -683,14 +627,14 @@ export default function AerialCampusMap({ timeMode = "dusk", onBusSelect }) {
         ctx.arc(t.x - t.r * 0.25, t.y - t.r * 0.25, t.r * 0.65, 0, Math.PI * 2);
         ctx.fill();
 
-        ctx.fillStyle = "rgba(255,255,255,0.15)";
+        ctx.fillStyle = "rgba(255,255,255,0.2)";
         ctx.beginPath();
         ctx.arc(t.x - t.r * 0.4, t.y - t.r * 0.4, t.r * 0.35, 0, Math.PI * 2);
         ctx.fill();
       });
 
-      // 6. Street Lamps with Ambient Glow (Night & Dusk)
-      if (timeMode !== "day") {
+      // 6. Street Lamps with Ambient Glow (Night only)
+      if (!theme.isDay) {
         streetLamps.forEach((lamp) => {
           const glow = ctx.createRadialGradient(
             lamp.x,
@@ -726,28 +670,18 @@ export default function AerialCampusMap({ timeMode = "dusk", onBusSelect }) {
         ctx.translate(cur.x, cur.y);
         ctx.rotate(angle);
 
-        // Car Shadow
-        ctx.fillStyle = "rgba(0,0,0,0.4)";
+        ctx.fillStyle = "rgba(0,0,0,0.35)";
         ctx.fillRect(-car.length / 2 + 3, -car.width / 2 + 4, car.length, car.width);
 
-        // Car Body
         ctx.fillStyle = car.color;
         ctx.beginPath();
-        ctx.roundRect(
-          -car.length / 2,
-          -car.width / 2,
-          car.length,
-          car.width,
-          4
-        );
+        ctx.roundRect(-car.length / 2, -car.width / 2, car.length, car.width, 4);
         ctx.fill();
 
-        // Windshield
         ctx.fillStyle = "#0f172a";
         ctx.fillRect(-car.length * 0.1, -car.width * 0.35, car.length * 0.3, car.width * 0.7);
 
-        // Headlights glow
-        if (timeMode !== "day") {
+        if (!theme.isDay) {
           const hGlow = ctx.createRadialGradient(
             car.length / 2 + 6,
             0,
@@ -769,12 +703,11 @@ export default function AerialCampusMap({ timeMode = "dusk", onBusSelect }) {
 
       // 8. Update & Render Animated KIT Buses
       buses.forEach((bus) => {
-        // Handle stopping at bus stops
         const curIdx = Math.floor(bus.index);
         const curPoint = bus.spline[curIdx];
 
         if (curPoint?.stop && bus.stopTimer <= 0 && Math.random() < 0.05) {
-          bus.stopTimer = 80; // Stop for ~1.5s
+          bus.stopTimer = 80;
         }
 
         if (bus.stopTimer > 0) {
@@ -792,19 +725,13 @@ export default function AerialCampusMap({ timeMode = "dusk", onBusSelect }) {
         ctx.rotate(angle);
 
         // Bus Drop Shadow
-        ctx.fillStyle = "rgba(0,0,0,0.5)";
+        ctx.fillStyle = "rgba(0,0,0,0.45)";
         ctx.beginPath();
-        ctx.roundRect(
-          -bus.length / 2 + 4,
-          -bus.width / 2 + 5,
-          bus.length,
-          bus.width,
-          6
-        );
+        ctx.roundRect(-bus.length / 2 + 4, -bus.width / 2 + 5, bus.length, bus.width, 6);
         ctx.fill();
 
-        // Bus Headlight Beams (Forward Light Cones onto Road)
-        if (timeMode !== "day") {
+        // Bus Headlight Beams in Night mode
+        if (!theme.isDay) {
           const lightCone = ctx.createRadialGradient(
             bus.length / 2,
             0,
@@ -826,7 +753,7 @@ export default function AerialCampusMap({ timeMode = "dusk", onBusSelect }) {
           ctx.closePath();
           ctx.fill();
 
-          // Tail Brake Lights Glow (Red)
+          // Tail Lights Glow
           const tailGlow = ctx.createRadialGradient(
             -bus.length / 2 - 4,
             0,
@@ -846,36 +773,24 @@ export default function AerialCampusMap({ timeMode = "dusk", onBusSelect }) {
           ctx.fill();
         }
 
-        // Bus Main Chassis Body
+        // Bus Main Body
         ctx.fillStyle = bus.color;
         ctx.beginPath();
-        ctx.roundRect(
-          -bus.length / 2,
-          -bus.width / 2,
-          bus.length,
-          bus.width,
-          6
-        );
+        ctx.roundRect(-bus.length / 2, -bus.width / 2, bus.length, bus.width, 6);
         ctx.fill();
         ctx.strokeStyle = "#b45309";
         ctx.lineWidth = 1.5;
         ctx.stroke();
 
-        // KIT College Red Livery Stripe
+        // KIT Red Stripe
         ctx.fillStyle = "#b91c1c";
         ctx.fillRect(-bus.length / 2 + 6, -bus.width / 2, bus.length - 12, 3);
         ctx.fillRect(-bus.length / 2 + 6, bus.width / 2 - 3, bus.length - 12, 3);
 
-        // Front Windshield Glass
+        // Windshield
         ctx.fillStyle = "#0f172a";
         ctx.beginPath();
-        ctx.roundRect(
-          bus.length / 2 - 11,
-          -bus.width / 2 + 3,
-          8,
-          bus.width - 6,
-          2
-        );
+        ctx.roundRect(bus.length / 2 - 11, -bus.width / 2 + 3, 8, bus.width - 6, 2);
         ctx.fill();
 
         // Rear Window
@@ -905,7 +820,7 @@ export default function AerialCampusMap({ timeMode = "dusk", onBusSelect }) {
         ctx.fillRect(-bus.length / 2, -bus.width / 2 + 2, 2.5, 3);
         ctx.fillRect(-bus.length / 2, bus.width / 2 - 5, 2.5, 3);
 
-        // Floating Live Beacon Pulse above bus
+        // Beacon Pulse
         const pulse = (Math.sin(currentTime * 0.005) + 1) * 0.5;
         ctx.beginPath();
         ctx.arc(0, 0, 14 + pulse * 6, 0, Math.PI * 2);
@@ -916,29 +831,13 @@ export default function AerialCampusMap({ timeMode = "dusk", onBusSelect }) {
         ctx.restore();
       });
 
-      // 9. Ambient Vignette / Fog Lighting
-      ctx.fillStyle = theme.ambientLight;
-      ctx.fillRect(-200, -200, baseW + 400, baseH + 400);
+      // 9. Ambient Vignette Lighting (Night only)
+      if (!theme.isDay) {
+        ctx.fillStyle = theme.ambientLight;
+        ctx.fillRect(-200, -200, baseW + 400, baseH + 400);
+      }
 
       ctx.restore();
-
-      // Screen-space HUD Elements & Grid Overlay
-      // Radar grid lines
-      ctx.strokeStyle = "rgba(255, 255, 255, 0.04)";
-      ctx.lineWidth = 1;
-      const gridSize = 60;
-      for (let x = 0; x < width; x += gridSize) {
-        ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, height);
-        ctx.stroke();
-      }
-      for (let y = 0; y < height; y += gridSize) {
-        ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(width, y);
-        ctx.stroke();
-      }
 
       animationFrameId = requestAnimationFrame(render);
     }
@@ -953,21 +852,9 @@ export default function AerialCampusMap({ timeMode = "dusk", onBusSelect }) {
   }, [timeMode]);
 
   return (
-    <div className="aerial-map-container">
+    <div className={`aerial-map-container ${timeMode}`}>
       <canvas ref={canvasRef} className="aerial-canvas" />
-      {/* Dynamic Ambient Vignette Overlay */}
       <div className="aerial-overlay-vignette" />
-      {/* Top Left Campus Coordinates HUD */}
-      <div className="hud-coordinates">
-        <div className="hud-badge">
-          <span className="hud-pulse" />
-          <span>KIT CAMPUS RADAR FEED</span>
-        </div>
-        <div className="hud-meta">
-          <span>COORDINATES: 10.9381° N, 76.9922° E</span>
-          <span>ALTITUDE: 432m AGL • COIMBATORE</span>
-        </div>
-      </div>
     </div>
   );
 }

@@ -16,8 +16,8 @@
   --kit-gold: #f59e0b;
 
   --bg-dark: #090e17;
-  --bg-card: rgba(15, 23, 42, 0.78);
-  --bg-card-border: rgba(255, 255, 255, 0.12);
+  --bg-card: rgba(15, 23, 42, 0.82);
+  --bg-card-border: rgba(255, 255, 255, 0.15);
   --text-main: #f1f5f9;
   --text-muted: #94a3b8;
 }
@@ -38,7 +38,7 @@ body {
 }
 
 /* =========================================================
-   AERIAL MAP BACKGROUND & HUD
+   AERIAL MAP BACKGROUND
    ========================================================= */
 
 .aerial-map-container {
@@ -62,68 +62,21 @@ body {
   inset: 0;
   background: radial-gradient(
     circle at 50% 50%,
-    rgba(9, 14, 23, 0.3) 0%,
-    rgba(9, 14, 23, 0.75) 75%,
-    rgba(9, 14, 23, 0.95) 100%
+    rgba(9, 14, 23, 0.25) 0%,
+    rgba(9, 14, 23, 0.72) 75%,
+    rgba(9, 14, 23, 0.92) 100%
   );
   pointer-events: none;
+  transition: background 0.4s ease;
 }
 
-.hud-coordinates {
-  position: absolute;
-  top: 24px;
-  left: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  background: rgba(15, 23, 42, 0.65);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 10px 16px;
-  border-radius: 12px;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.5px;
-  color: #94a3b8;
-  pointer-events: auto;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-}
-
-.hud-badge {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 700;
-  color: #38bdf8;
-  letter-spacing: 1px;
-}
-
-.hud-pulse {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #10b981;
-  box-shadow: 0 0 10px #10b981;
-  animation: pulseBeacon 2s infinite ease-in-out;
-}
-
-.hud-meta {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  font-size: 10px;
-  color: #64748b;
-}
-
-@keyframes pulseBeacon {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.4);
-    opacity: 0.6;
-  }
+.aerial-map-container.day .aerial-overlay-vignette {
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(15, 23, 42, 0.04) 0%,
+    rgba(15, 23, 42, 0.2) 75%,
+    rgba(15, 23, 42, 0.45) 100%
+  );
 }
 
 /* =========================================================
@@ -142,7 +95,7 @@ body {
   z-index: 10;
 }
 
-/* Top bar controls */
+/* Top bar controls (Day / Night switch) */
 .login-topbar {
   position: absolute;
   top: 24px;
@@ -155,20 +108,21 @@ body {
 
 .theme-pill-group {
   display: flex;
-  background: rgba(15, 23, 42, 0.7);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   padding: 4px;
   border-radius: 30px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 }
 
 .theme-pill-btn {
   background: none;
   border: none;
   color: #94a3b8;
-  font-size: 12px;
-  font-weight: 600;
-  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 8px 18px;
   border-radius: 20px;
   cursor: pointer;
   transition: all 0.25s ease;
@@ -184,30 +138,7 @@ body {
 .theme-pill-btn.active {
   background: #2563eb;
   color: #fff;
-  box-shadow: 0 2px 10px rgba(37, 99, 235, 0.4);
-}
-
-.live-badge-top {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(15, 23, 42, 0.7);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 8px 16px;
-  border-radius: 30px;
-  font-size: 12px;
-  font-weight: 600;
-  color: #e2e8f0;
-}
-
-.live-badge-top .dot {
-  width: 8px;
-  height: 8px;
-  background: #22c55e;
-  border-radius: 50%;
-  box-shadow: 0 0 10px #22c55e;
-  animation: pulseBeacon 1.5s infinite;
+  box-shadow: 0 2px 12px rgba(37, 99, 235, 0.5);
 }
 
 /* Center Hero Wrapper */
@@ -238,7 +169,7 @@ body {
   border-radius: 50%;
   background: radial-gradient(
     circle,
-    rgba(192, 24, 35, 0.4) 0%,
+    rgba(192, 24, 35, 0.45) 0%,
     rgba(37, 99, 235, 0.25) 50%,
     transparent 70%
   );
@@ -250,7 +181,7 @@ body {
   position: absolute;
   inset: -4px;
   border-radius: 50%;
-  border: 2px dashed rgba(251, 191, 36, 0.6);
+  border: 2px dashed rgba(251, 191, 36, 0.7);
   animation: ringRotate 24s linear infinite;
 }
 
@@ -302,7 +233,7 @@ body {
 .login-card {
   position: relative;
   width: 100%;
-  background: rgba(15, 23, 42, 0.82);
+  background: rgba(15, 23, 42, 0.85);
   backdrop-filter: blur(28px);
   -webkit-backdrop-filter: blur(28px);
   border: 1px solid rgba(255, 255, 255, 0.15);
@@ -376,20 +307,12 @@ body {
   align-items: center;
 }
 
-.input-icon {
-  position: absolute;
-  left: 14px;
-  color: #64748b;
-  font-size: 16px;
-  pointer-events: none;
-}
-
 .input-with-icon input {
   width: 100%;
   background: rgba(30, 41, 59, 0.65);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 12px;
-  padding: 13px 44px 13px 42px;
+  padding: 13px 44px 13px 18px;
   color: #fff;
   font-size: 14px;
   font-family: var(--font-body);
@@ -483,90 +406,6 @@ body {
 
 @keyframes spin {
   to { transform: rotate(360deg); }
-}
-
-/* Demo Fast Login Section */
-.demo-access-section {
-  margin-top: 24px;
-  padding-top: 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  text-align: left;
-}
-
-.demo-title {
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: #94a3b8;
-  margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.demo-pills-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-}
-
-.demo-chip {
-  background: rgba(30, 41, 59, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
-  padding: 10px 8px;
-  color: #e2e8f0;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-}
-
-.demo-chip:hover {
-  background: rgba(37, 99, 235, 0.2);
-  border-color: rgba(59, 130, 246, 0.5);
-  transform: translateY(-2px);
-}
-
-.demo-chip.selected {
-  background: rgba(192, 24, 35, 0.25);
-  border-color: #c01823;
-  color: #fff;
-}
-
-.demo-chip-icon {
-  font-size: 18px;
-}
-
-.demo-chip-name {
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.demo-chip-role {
-  font-size: 9.5px;
-  color: #94a3b8;
-  font-family: var(--font-mono);
-}
-
-.footer-system-status {
-  margin-top: 20px;
-  font-size: 11px;
-  color: #64748b;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-}
-
-.footer-system-status .dot {
-  width: 6px;
-  height: 6px;
-  background: #10b981;
-  border-radius: 50%;
 }
 
 /* =========================================================
@@ -1127,9 +966,6 @@ h1 {
   }
   .login-card {
     padding: 50px 20px 24px;
-  }
-  .hud-coordinates {
-    display: none;
   }
   .login-topbar {
     top: 14px;

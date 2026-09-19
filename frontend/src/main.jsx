@@ -32,8 +32,7 @@ function Login({ onLogin }) {
   const [showPassword, setShowPassword] = useState(false);
   const [err, setErr] = useState("");
   const [loading, setLoading] = useState(false);
-  const [selectedRole, setSelectedRole] = useState("student");
-  const [timeMode, setTimeMode] = useState("dusk");
+  const [timeMode, setTimeMode] = useState("day");
 
   async function submit(e) {
     e.preventDefault();
@@ -52,19 +51,12 @@ function Login({ onLogin }) {
     }
   }
 
-  const setDemoUser = (role, demoEmail, demoPass) => {
-    setSelectedRole(role);
-    setEmail(demoEmail);
-    setPassword(demoPass);
-    setErr("");
-  };
-
   return (
-    <div className="login-page">
+    <div className={`login-page ${timeMode}`}>
       {/* 1. Animated Aerial Campus & Streets Background */}
       <AerialCampusMap timeMode={timeMode} />
 
-      {/* 2. Top Bar Controls: Lighting mode & Live fleet status */}
+      {/* 2. Top Bar Controls: Day & Night only */}
       <div className="login-topbar">
         <div className="theme-pill-group">
           <button
@@ -77,25 +69,12 @@ function Login({ onLogin }) {
           </button>
           <button
             type="button"
-            className={`theme-pill-btn ${timeMode === "dusk" ? "active" : ""}`}
-            onClick={() => setTimeMode("dusk")}
-            title="Golden Dusk View"
-          >
-            🌇 Dusk
-          </button>
-          <button
-            type="button"
             className={`theme-pill-btn ${timeMode === "night" ? "active" : ""}`}
             onClick={() => setTimeMode("night")}
-            title="Cyber Night Radar"
+            title="Night View"
           >
             🌙 Night
           </button>
-        </div>
-
-        <div className="live-badge-top">
-          <span className="dot" />
-          <span>4 KIT BUSES ROAMING LIVE</span>
         </div>
       </div>
 
@@ -180,66 +159,6 @@ function Login({ onLogin }) {
               )}
             </button>
           </form>
-
-          {/* Quick Demo Access Pills */}
-          <div className="demo-access-section">
-            <div className="demo-title">
-              <span>🚀 One-Click Demo Access</span>
-              <small>Click to switch role</small>
-            </div>
-            <div className="demo-pills-grid">
-              <button
-                type="button"
-                className={`demo-chip ${
-                  selectedRole === "student" ? "selected" : ""
-                }`}
-                onClick={() =>
-                  setDemoUser(
-                    "student",
-                    "student@campusbus.local",
-                    "Student123!"
-                  )
-                }
-              >
-                <span className="demo-chip-icon">🎓</span>
-                <span className="demo-chip-name">Student</span>
-                <span className="demo-chip-role">Live Tracking</span>
-              </button>
-
-              <button
-                type="button"
-                className={`demo-chip ${
-                  selectedRole === "driver" ? "selected" : ""
-                }`}
-                onClick={() =>
-                  setDemoUser("driver", "driver@campusbus.local", "Driver123!")
-                }
-              >
-                <span className="demo-chip-icon">🚌</span>
-                <span className="demo-chip-name">Driver</span>
-                <span className="demo-chip-role">GPS Broadcast</span>
-              </button>
-
-              <button
-                type="button"
-                className={`demo-chip ${
-                  selectedRole === "admin" ? "selected" : ""
-                }`}
-                onClick={() =>
-                  setDemoUser("admin", "admin@campusbus.local", "Admin123!")
-                }
-              >
-                <span className="demo-chip-icon">🛡️</span>
-                <span className="demo-chip-name">Admin</span>
-                <span className="demo-chip-role">Fleet Control</span>
-              </button>
-            </div>
-          </div>
-
-          <div className="footer-system-status">
-            <span className="dot" />
-            <span>Encrypted Session • High-Precision Campus GPS Active</span>
-          </div>
         </div>
       </div>
     </div>
