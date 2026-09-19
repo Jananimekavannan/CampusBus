@@ -85,12 +85,12 @@ function Login({ onLogin, timeMode, setTimeMode }) {
       {/* Revolving Road & Revolving KIT Bus encircling the login box */}
       <RevolvingBusRoad timeMode={timeMode} />
 
-      {/* Top Bar: Live GPS Coordinates, Status & Theme Switcher */}
+      {/* Top Bar: Live Fleet Status & Theme Switcher */}
       <div className="login-topbar">
         <div className="login-live-telemetry-badge">
           <span className="live-gps-dot" />
           <span className="live-gps-text">
-            KIT GPS: <b>10.9922°N, 77.0864°E</b> • 5G WEBSOCKET ACTIVE • FLEET: 7 ONLINE
+            KIT TRANSIT: <b>COIMBATORE CAMPUS RADAR</b> • 5G WEBSOCKET ACTIVE • FLEET: 7 ONLINE
           </span>
         </div>
 

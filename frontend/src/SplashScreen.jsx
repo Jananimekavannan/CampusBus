@@ -15,7 +15,7 @@ export default function SplashScreen({ onFinish }) {
 
   // Dynamic real-time subsystem loading telemetry
   const getStatusText = (p) => {
-    if (p < 20) return "🚍 Initializing Campus Transit & Live GPS (10.9922°N, 77.0864°E)...";
+    if (p < 20) return "🚍 Initializing Campus Transit & Live GPS Tracking...";
     if (p < 40) return "🗺️ Mapping 7 Coimbatore Transit Corridors & 38 Stops...";
     if (p < 65) return "🚍 Linking Active KIT College Fleet Telemetry & Speed Sensors...";
     if (p < 85) return "⚡ Synchronizing Real-Time Student & Driver WebSockets...";
@@ -48,15 +48,15 @@ export default function SplashScreen({ onFinish }) {
         {/* Radar Matrix Coordinate Grid */}
         <div className="splash-radar-grid" />
 
-        {/* Floating Telemetry Coordinates Streamers */}
+        {/* Floating Telemetry Streamers */}
         <div className="splash-telemetry-streamers left-streamer">
-          <span>LAT: 10.9922° N</span>
-          <span>LNG: 77.0864° E</span>
-          <span>CORRIDOR: NH-544</span>
+          <span>ZONE: COIMBATORE METRO</span>
+          <span>CAMPUS: KANNAMPALAYAM</span>
+          <span>CORRIDOR: NH-544 PEELAMEDU</span>
         </div>
         <div className="splash-telemetry-streamers right-streamer">
-          <span>FREQ: 433.92 MHz</span>
-          <span>FLEET: 7 ONLINE</span>
+          <span>RADIO: 433.92 MHz</span>
+          <span>FLEET: 7 BUSES ONLINE</span>
           <span>ENCRYPTION: TLS-256</span>
         </div>
 
