@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import kitLogo from "./assets/kit-logo.png";
 
 /**
- * SplashScreen - "KITBusMiss"
- * - Blue sky background with drifting fluffy white clouds and sunny ambient glow
- * - Large, crisp KIT College Bus driving smoothly from Left to Right across a wide road
- * - Centered KIT Coimbatore Logo & KITBusMiss title
+ * KITBusMiss Cinematic Splash Loader Screen:
+ * - Sunny Blue Sky with drifting puffy clouds & horizon landscape
+ * - Clean animated KIT college bus driving on road from Left to Right
+ * - Centered KIT Coimbatore logo & KITBusMiss title
  * - Clean "Loading..." progress indicator
  * - No skip button
  */

@@ -99,19 +99,12 @@ function Login({ onLogin, timeMode, setTimeMode }) {
         </div>
       </div>
 
-      {/* Center Hero: Centered KIT Logo & Login Card */}
+      {/* Center Hero: Login Card with Integrated Clean Fitted Logo */}
       <div className="login-center-wrapper">
-        {/* Centered Circular KIT Coimbatore Logo */}
-        <div className="kit-logo-center-badge">
-          <div className="kit-logo-halo" />
-          <div className="kit-logo-spin-ring" />
-          <div className="kit-logo-img-wrap">
-            <img src={kitLogo} alt="KIT Coimbatore Logo" />
-          </div>
-        </div>
-
-        {/* Clean Glassmorphic Login Card */}
         <div className="login-card">
+          <div className="login-header-logo-badge">
+            <img src={kitLogo} alt="KIT Coimbatore Logo" className="login-kit-logo-img" />
+          </div>
           <span className="institution-tag">KIT COIMBATORE</span>
           <h1>KITBusMiss Portal</h1>
           <p className="subtitle">
