@@ -46,44 +46,222 @@ body {
   inset: 0;
   width: 100vw;
   height: 100vh;
-  background: radial-gradient(circle at 50% 40%, #172554 0%, #090e17 70%, #030712 100%);
+  background: linear-gradient(180deg, #0284c7 0%, #38bdf8 35%, #7dd3fc 65%, #bae6fd 90%, #dbeafe 100%);
   display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
   z-index: 1000;
-  padding: 24px;
+  overflow: hidden;
 }
 
-.splash-content {
+/* Sky & Floating Clouds Layer */
+.splash-sky {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.splash-sun {
+  position: absolute;
+  top: 35px;
+  right: 60px;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fef08a 25%, #facc15 65%, rgba(250, 204, 21, 0) 100%);
+  box-shadow: 0 0 60px #facc15;
+  animation: sunPulse 4s infinite alternate ease-in-out;
+}
+
+@keyframes sunPulse {
+  0% { transform: scale(0.92); opacity: 0.85; }
+  100% { transform: scale(1.1); opacity: 1; }
+}
+
+/* Puffy Drifting Clouds */
+.cloud {
+  position: absolute;
+  background: #ffffff;
+  border-radius: 50px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+}
+
+.cloud::before,
+.cloud::after {
+  content: "";
+  position: absolute;
+  background: #ffffff;
+  border-radius: 50%;
+}
+
+.cloud-1 {
+  top: 45px;
+  left: -200px;
+  width: 180px;
+  height: 55px;
+  animation: floatCloud 24s linear infinite;
+  opacity: 0.95;
+}
+.cloud-1::before {
+  width: 70px;
+  height: 70px;
+  top: -30px;
+  left: 25px;
+}
+.cloud-1::after {
+  width: 90px;
+  height: 90px;
+  top: -45px;
+  left: 70px;
+}
+
+.cloud-2 {
+  top: 130px;
+  left: -280px;
+  width: 250px;
+  height: 70px;
+  animation: floatCloud 36s linear infinite;
+  animation-delay: 4s;
+  opacity: 0.9;
+}
+.cloud-2::before {
+  width: 95px;
+  height: 95px;
+  top: -45px;
+  left: 35px;
+}
+.cloud-2::after {
+  width: 120px;
+  height: 120px;
+  top: -60px;
+  left: 95px;
+}
+
+.cloud-3 {
+  top: 80px;
+  left: -220px;
+  width: 160px;
+  height: 50px;
+  animation: floatCloud 28s linear infinite;
+  animation-delay: 11s;
+  opacity: 0.85;
+}
+.cloud-3::before {
+  width: 60px;
+  height: 60px;
+  top: -28px;
+  left: 25px;
+}
+.cloud-3::after {
+  width: 75px;
+  height: 75px;
+  top: -38px;
+  left: 65px;
+}
+
+.cloud-4 {
+  top: 190px;
+  left: -320px;
+  width: 280px;
+  height: 75px;
+  animation: floatCloud 42s linear infinite;
+  animation-delay: 2s;
+  opacity: 0.8;
+}
+.cloud-4::before {
+  width: 100px;
+  height: 100px;
+  top: -45px;
+  left: 45px;
+}
+.cloud-4::after {
+  width: 130px;
+  height: 130px;
+  top: -65px;
+  left: 115px;
+}
+
+.cloud-5 {
+  top: 100px;
+  left: -180px;
+  width: 140px;
+  height: 45px;
+  animation: floatCloud 22s linear infinite;
+  animation-delay: 16s;
+  opacity: 0.9;
+}
+.cloud-5::before {
+  width: 55px;
+  height: 55px;
+  top: -25px;
+  left: 20px;
+}
+.cloud-5::after {
+  width: 70px;
+  height: 70px;
+  top: -35px;
+  left: 55px;
+}
+
+@keyframes floatCloud {
+  from { transform: translateX(0); }
+  to { transform: translateX(calc(100vw + 400px)); }
+}
+
+.splash-horizon-landscape {
+  position: absolute;
+  bottom: 110px;
+  left: 0;
+  right: 0;
+  height: 110px;
+  background: linear-gradient(180deg, transparent 0%, rgba(34, 197, 94, 0.3) 40%, #16a34a 100%);
+  border-radius: 50% 50% 0 0 / 25px 25px 0 0;
+}
+
+/* Centered Branding Card */
+.splash-center-content {
+  position: relative;
+  z-index: 20;
+  margin-top: auto;
+  margin-bottom: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  max-width: 520px;
-  width: 100%;
+  background: rgba(15, 23, 42, 0.88);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 28px;
+  padding: 40px 36px 32px;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+  max-width: 480px;
+  width: 90%;
 }
 
 .splash-logo-wrap {
   position: relative;
-  width: 120px;
-  height: 120px;
-  margin-bottom: 24px;
+  width: 110px;
+  height: 110px;
+  margin-bottom: 18px;
   display: grid;
   place-items: center;
 }
 
-.splash-logo-glow {
+.splash-logo-halo {
   position: absolute;
-  inset: -14px;
+  inset: -12px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(192, 24, 35, 0.6) 0%, rgba(37, 99, 235, 0.4) 60%, transparent 80%);
-  filter: blur(10px);
+  background: radial-gradient(circle, rgba(192, 24, 35, 0.5) 0%, rgba(37, 99, 235, 0.35) 60%, transparent 80%);
+  filter: blur(8px);
   animation: splashGlow 3s infinite alternate ease-in-out;
 }
 
 .splash-logo-ring {
   position: absolute;
-  inset: -6px;
+  inset: -5px;
   border-radius: 50%;
   border: 2px dashed rgba(251, 191, 36, 0.8);
   animation: ringRotate 20s linear infinite;
@@ -91,19 +269,19 @@ body {
 
 .splash-logo-img {
   position: relative;
-  width: 100px;
-  height: 100px;
+  width: 92px;
+  height: 92px;
   border-radius: 50%;
   background: #fff;
-  padding: 4px;
+  padding: 3px;
   border: 3px solid #c01823;
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
 }
 
-.splash-badge {
+.splash-institution-tag {
   display: inline-block;
   font-family: var(--font-heading);
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 800;
   letter-spacing: 1.5px;
   color: #fbbf24;
@@ -111,16 +289,16 @@ body {
   border: 1px solid rgba(251, 191, 36, 0.35);
   padding: 4px 14px;
   border-radius: 20px;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .splash-title {
   font-family: var(--font-heading);
-  font-size: 42px;
+  font-size: 38px;
   font-weight: 900;
-  letter-spacing: -1px;
+  letter-spacing: -0.5px;
   color: #ffffff;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .splash-title span {
@@ -132,173 +310,127 @@ body {
 
 .splash-subtitle {
   color: #94a3b8;
-  font-size: 13.5px;
-  max-width: 420px;
-  margin-bottom: 32px;
+  font-size: 12.5px;
+  line-height: 1.4;
+  margin-bottom: 22px;
 }
 
-/* Animated Running Bus Scene */
-.splash-bus-scene {
-  position: relative;
+/* Loading Box */
+.splash-loading-box {
   width: 100%;
-  height: 90px;
-  margin-bottom: 28px;
+}
+
+.splash-progress-track {
+  width: 100%;
+  height: 8px;
+  background: rgba(30, 41, 59, 0.8);
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.splash-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #c01823 0%, #f59e0b 50%, #10b981 100%);
+  border-radius: 10px;
+  transition: width 0.05s linear;
+  box-shadow: 0 0 14px rgba(245, 158, 11, 0.7);
+}
+
+.splash-loading-status {
   display: flex;
-  align-items: flex-end;
-  justify-content: center;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: #94a3b8;
 }
 
-.splash-road {
+.splash-loading-status b {
+  color: #38bdf8;
+}
+
+/* Full-Width Road at Bottom with Moving Bus */
+.splash-road-container {
   position: relative;
-  width: 100%;
-  height: 24px;
-  background: #1e293b;
-  border-radius: 12px;
-  border: 2px solid #334155;
+  width: 100vw;
+  height: 110px;
+  z-index: 20;
   overflow: hidden;
 }
 
-.splash-road-stripes {
+.splash-highway {
+  position: absolute;
+  inset: 0;
+  background: #1e293b;
+  border-top: 4px solid #334155;
+}
+
+.splash-kerb-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: repeating-linear-gradient(
+    90deg,
+    #ef4444 0px,
+    #ef4444 20px,
+    #ffffff 20px,
+    #ffffff 40px
+  );
+}
+
+.splash-center-stripes {
   position: absolute;
   top: 50%;
   left: 0;
-  width: 200%;
-  height: 3px;
+  width: 100%;
+  height: 4px;
   transform: translateY(-50%);
   background: repeating-linear-gradient(
     90deg,
     #facc15 0px,
-    #facc15 16px,
-    transparent 16px,
-    transparent 32px
+    #facc15 28px,
+    transparent 28px,
+    transparent 56px
   );
-  animation: roadMove 0.8s linear infinite;
 }
 
-@keyframes roadMove {
-  from { transform: translateY(-50%) translateX(0); }
-  to { transform: translateY(-50%) translateX(-32px); }
-}
-
-/* Side-view Animated KIT Bus */
-.splash-bus {
+.splash-kerb-bottom {
   position: absolute;
-  bottom: 12px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 110px;
-  height: 52px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: #0f172a;
+}
+
+/* Bus Moving Left to Right */
+.splash-bus-traveler {
+  position: absolute;
+  bottom: 14px;
+  width: 240px;
+  height: 100px;
+  z-index: 30;
+  pointer-events: none;
+  transition: left 0.05s linear;
+}
+
+.kit-bus-svg-wrapper {
+  width: 100%;
+  height: 100%;
   animation: busSuspension 0.4s infinite alternate ease-in-out;
 }
 
-@keyframes busSuspension {
-  0% { transform: translateX(-50%) translateY(0); }
-  100% { transform: translateX(-50%) translateY(-2px); }
-}
-
-.splash-bus-body {
-  position: relative;
+.kit-bus-svg {
   width: 100%;
-  height: 42px;
-  background: #fbbf24;
-  border: 2px solid #b45309;
-  border-radius: 8px 14px 4px 6px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
-  overflow: hidden;
+  height: 100%;
+  display: block;
 }
 
-.splash-bus-roof-ac {
-  position: absolute;
-  top: -4px;
-  left: 30px;
-  width: 32px;
-  height: 6px;
-  background: #ffffff;
-  border: 1px solid #cbd5e1;
-  border-radius: 4px;
-}
-
-.splash-bus-banner {
-  position: absolute;
-  top: 4px;
-  left: 6px;
-  font-size: 7.5px;
-  font-weight: 800;
-  color: #1e3a8a;
-  letter-spacing: 0.5px;
-}
-
-.splash-bus-windows {
-  position: absolute;
-  top: 15px;
-  left: 6px;
-  display: flex;
-  gap: 4px;
-}
-
-.splash-window {
-  width: 16px;
-  height: 12px;
-  background: #0f172a;
-  border-radius: 2px;
-}
-
-.splash-window.front-window {
-  width: 22px;
-  border-radius: 2px 8px 2px 2px;
-}
-
-.splash-bus-stripe {
-  position: absolute;
-  bottom: 6px;
-  left: 0;
-  right: 0;
-  height: 5px;
-  background: #b91c1c;
-}
-
-.splash-bus-headlight {
-  position: absolute;
-  bottom: 8px;
-  right: 2px;
-  width: 5px;
-  height: 6px;
-  background: #fef08a;
-  border-radius: 2px;
-  box-shadow: 0 0 12px #fef08a;
-}
-
-.splash-bus-taillight {
-  position: absolute;
-  bottom: 8px;
-  left: 2px;
-  width: 4px;
-  height: 6px;
-  background: #ef4444;
-  border-radius: 2px;
-}
-
-.splash-wheel {
-  position: absolute;
-  bottom: -4px;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: #0f172a;
-  border: 3px solid #334155;
-  display: grid;
-  place-items: center;
-  animation: wheelSpin 0.5s linear infinite;
-}
-
-.splash-wheel.front-wheel { right: 14px; }
-.splash-wheel.back-wheel { left: 14px; }
-
-.wheel-rim {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #cbd5e1;
+.bus-spinning-wheel {
+  animation: wheelSpin 0.35s linear infinite;
 }
 
 @keyframes wheelSpin {
@@ -306,84 +438,19 @@ body {
   to { transform: rotate(360deg); }
 }
 
-.smoke-puff {
-  position: absolute;
-  bottom: 0px;
-  left: -8px;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: rgba(203, 213, 225, 0.6);
-  animation: smokeMove 0.8s infinite ease-out;
-}
-
-.smoke-puff.p2 {
-  animation-delay: 0.4s;
-}
-
-@keyframes smokeMove {
-  0% { transform: scale(0.5) translate(0, 0); opacity: 0.8; }
-  100% { transform: scale(2) translate(-25px, -12px); opacity: 0; }
-}
-
-/* Progress Bar */
-.splash-progress-wrap {
-  width: 100%;
-  max-width: 400px;
-  margin-bottom: 20px;
-}
-
-.splash-progress-bar {
-  width: 100%;
-  height: 7px;
-  background: rgba(30, 41, 59, 0.8);
-  border-radius: 10px;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.splash-progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #c01823 0%, #f59e0b 50%, #10b981 100%);
-  border-radius: 10px;
-  transition: width 0.1s linear;
-  box-shadow: 0 0 12px rgba(245, 158, 11, 0.6);
-}
-
-.splash-progress-info {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 8px;
-  font-family: var(--font-mono);
-  font-size: 11.5px;
-  color: #94a3b8;
-}
-
-.splash-progress-info b {
-  color: #38bdf8;
-}
-
-.splash-skip-btn {
-  background: none;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: #94a3b8;
-  font-size: 12px;
-  font-weight: 600;
-  padding: 6px 16px;
-  border-radius: 20px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.splash-skip-btn:hover {
-  color: #fff;
-  border-color: #3b82f6;
-  background: rgba(59, 130, 246, 0.15);
+@keyframes busSuspension {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-2.5px); }
 }
 
 @keyframes splashGlow {
   0% { transform: scale(0.9); opacity: 0.6; }
   100% { transform: scale(1.2); opacity: 1; }
+}
+
+@keyframes ringRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 /* =========================================================
@@ -497,6 +564,11 @@ body {
   background: radial-gradient(circle, rgba(192, 24, 35, 0.5) 0%, rgba(37, 99, 235, 0.3) 50%, transparent 70%);
   animation: haloGlow 4s infinite alternate ease-in-out;
   filter: blur(8px);
+}
+
+@keyframes haloGlow {
+  0% { transform: scale(0.92); opacity: 0.6; }
+  100% { transform: scale(1.15); opacity: 1; }
 }
 
 .kit-logo-spin-ring {
@@ -700,6 +772,12 @@ body {
   animation: shake 0.4s ease;
 }
 
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+
 .submit-btn {
   margin-top: 4px;
   width: 100%;
@@ -739,6 +817,10 @@ body {
   border-top-color: #fff;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 /* =========================================================
@@ -1298,13 +1380,16 @@ h1 {
     gap: 12px;
   }
   .login-card {
-    padding: 50px 20px 24px;
+    padding: 45px 18px 24px;
   }
   .login-topbar {
     top: 14px;
     right: 14px;
   }
   .splash-title {
-    font-size: 32px;
+    font-size: 30px;
+  }
+  .splash-center-content {
+    padding: 30px 20px;
   }
 }
