@@ -139,22 +139,35 @@ export default function SplashScreen({ onFinish }) {
         </div>
       </div>
 
-      {/* 4. High-Tech Transit Highway with Speeding KIT College Bus */}
+      {/* 4. High-Tech Transit Highway with Speeding KIT College Bus moving Left to Right */}
       <div className="splash-road-container tech-road-container">
         {/* Road Surface & Neon Rail Markings */}
         <div className="splash-highway tech-highway">
           <div className="splash-neon-rail top-rail" />
           <div className="splash-center-stripes tech-stripes" />
           <div className="splash-neon-rail bottom-rail" />
+          <div className="splash-road-reflectors">
+            <span className="reflector ref-1" />
+            <span className="reflector ref-2" />
+            <span className="reflector ref-3" />
+            <span className="reflector ref-4" />
+            <span className="reflector ref-5" />
+            <span className="reflector ref-6" />
+          </div>
         </div>
 
-        {/* Animated KIT College Bus driving from Left to Right */}
-        <div
-          className="splash-bus-traveler"
-          style={{
-            left: `calc(${progress}% * 1.15 - 130px)`,
-          }}
-        >
+        {/* Speed Lines & Asphalt Glow on Road */}
+        <div className="splash-road-speed-lines" />
+
+        {/* Primary Animated KIT College Bus (Bus 12 - Gandhipuram Express) driving Left to Right */}
+        <div className="splash-bus-traveler bus-primary-lead">
+          {/* Exhaust Smoke Particle Puffs */}
+          <div className="bus-exhaust-smoke">
+            <div className="smoke-puff p1" />
+            <div className="smoke-puff p2" />
+            <div className="smoke-puff p3" />
+          </div>
+
           {/* Detailed High-Tech Side-View KIT College Bus */}
           <div className="kit-bus-svg-wrapper bus-bouncing-chassis">
             <svg
@@ -163,11 +176,11 @@ export default function SplashScreen({ onFinish }) {
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
             >
-              {/* Cyan Underglow Neon Shadow */}
-              <ellipse cx="140" cy="112" rx="120" ry="8" fill="rgba(37,99,235,0.55)" filter="blur(4px)" />
-              <ellipse cx="140" cy="112" rx="110" ry="5" fill="rgba(250,204,21,0.4)" filter="blur(3px)" />
+              {/* Cyan & Gold Underglow Neon Shadow */}
+              <ellipse cx="140" cy="112" rx="120" ry="8" fill="rgba(37,99,235,0.6)" filter="blur(4px)" />
+              <ellipse cx="140" cy="112" rx="110" ry="5" fill="rgba(250,204,21,0.45)" filter="blur(3px)" />
 
-              {/* Bus Main Chassis Body */}
+              {/* Bus Main Chassis Body (KIT Cyber Gold livery) */}
               <rect
                 x="15"
                 y="20"
@@ -218,7 +231,7 @@ export default function SplashScreen({ onFinish }) {
                 12 • KIT CAMPUS
               </text>
 
-              {/* Side Branding "KIT COIMBATORE • CAMPUS TRANSIT" */}
+              {/* Side Branding "KALAIGNARKARUNANIDHI INST OF TECH" */}
               <text
                 x="125"
                 y="79.5"
@@ -253,10 +266,10 @@ export default function SplashScreen({ onFinish }) {
               <line x1="132" y1="42" x2="152" y2="60" stroke="rgba(255,255,255,0.4)" strokeWidth="2" />
               <line x1="174" y1="42" x2="194" y2="60" stroke="rgba(255,255,255,0.4)" strokeWidth="2" />
 
-              {/* High-Intensity LED Headlight Projection */}
+              {/* High-Intensity LED Headlight Projection (Forward Illuminating Cone) */}
               <path d="M 252 74 L 257 76 L 257 84 L 252 86 Z" fill="#FEF08A" />
               <polygon
-                points="257,75 295,55 295,105 257,85"
+                points="257,75 320,50 320,110 257,85"
                 fill="url(#headlightBeamGrad)"
               />
 
@@ -264,15 +277,15 @@ export default function SplashScreen({ onFinish }) {
               <rect x="13" y="74" width="4" height="12" rx="2" fill="#EF4444" />
               <polygon
                 points="13,74 -20,65 -20,95 13,86"
-                fill="rgba(239, 68, 68, 0.25)"
+                fill="rgba(239, 68, 68, 0.3)"
               />
 
               {/* Wheel Arches */}
               <circle cx="68" cy="95" r="19" fill="#0F172A" />
               <circle cx="205" cy="95" r="19" fill="#0F172A" />
 
-              {/* Back Wheel with Alloy Rims */}
-              <g className="bus-spinning-wheel" style={{ transformOrigin: "68px 95px" }}>
+              {/* Back Wheel with Spinning Alloy Spokes */}
+              <g className="bus-spinning-wheel">
                 <circle cx="68" cy="95" r="16" fill="#1E293B" stroke="#64748B" strokeWidth="3" />
                 <circle cx="68" cy="95" r="7" fill="#E2E8F0" />
                 <circle cx="68" cy="95" r="3" fill="#C01823" />
@@ -280,8 +293,8 @@ export default function SplashScreen({ onFinish }) {
                 <line x1="55" y1="95" x2="81" y2="95" stroke="#94A3B8" strokeWidth="2" />
               </g>
 
-              {/* Front Wheel with Alloy Rims */}
-              <g className="bus-spinning-wheel" style={{ transformOrigin: "205px 95px" }}>
+              {/* Front Wheel with Spinning Alloy Spokes */}
+              <g className="bus-spinning-wheel">
                 <circle cx="205" cy="95" r="16" fill="#1E293B" stroke="#64748B" strokeWidth="3" />
                 <circle cx="205" cy="95" r="7" fill="#E2E8F0" />
                 <circle cx="205" cy="95" r="3" fill="#C01823" />
@@ -289,14 +302,105 @@ export default function SplashScreen({ onFinish }) {
                 <line x1="192" y1="95" x2="218" y2="95" stroke="#94A3B8" strokeWidth="2" />
               </g>
 
-              {/* Bus Door */}
+              {/* Bus Front Door Outline */}
               <rect x="208" y="40" width="2" height="42" fill="#334155" />
 
               <defs>
                 <linearGradient id="headlightBeamGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="rgba(254, 240, 138, 0.75)" />
-                  <stop offset="60%" stopColor="rgba(253, 224, 71, 0.3)" />
+                  <stop offset="0%" stopColor="rgba(254, 240, 138, 0.85)" />
+                  <stop offset="50%" stopColor="rgba(253, 224, 71, 0.4)" />
                   <stop offset="100%" stopColor="rgba(253, 224, 71, 0)" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+        </div>
+
+        {/* Secondary Follower KIT College Bus (Bus 07 - Saravanampatti Express) driving Left to Right */}
+        <div className="splash-bus-traveler bus-secondary-follower">
+          {/* Exhaust Smoke */}
+          <div className="bus-exhaust-smoke">
+            <div className="smoke-puff p1" />
+            <div className="smoke-puff p2" />
+          </div>
+
+          <div className="kit-bus-svg-wrapper bus-bouncing-chassis">
+            <svg
+              viewBox="0 0 280 120"
+              className="kit-bus-svg"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              {/* Cyan Underglow */}
+              <ellipse cx="140" cy="112" rx="120" ry="8" fill="rgba(6,182,212,0.6)" filter="blur(4px)" />
+
+              {/* Bus Body in Electric Cyan Livery */}
+              <rect
+                x="15"
+                y="20"
+                width="240"
+                height="75"
+                rx="14"
+                fill="#0284C7"
+                stroke="#0369A1"
+                strokeWidth="3"
+              />
+
+              {/* Roof AC */}
+              <rect x="80" y="10" width="80" height="12" rx="5" fill="#FFFFFF" stroke="#CBD5E1" strokeWidth="2" />
+              <circle cx="210" cy="14" r="5" fill="#38BDF8" />
+              <line x1="210" y1="14" x2="210" y2="20" stroke="#0284C7" strokeWidth="3" />
+
+              {/* Livery Stripes */}
+              <rect x="15" y="70" width="240" height="12" fill="#F59E0B" />
+              <rect x="15" y="44" width="240" height="3" fill="#FFFFFF" />
+
+              {/* Route Board */}
+              <rect x="180" y="24" width="65" height="14" rx="3" fill="#090E17" stroke="#38BDF8" strokeWidth="1" />
+              <text x="212" y="34" fill="#38BDF8" fontSize="7.5" fontWeight="900" textAnchor="middle" fontFamily="sans-serif">
+                07 • SARAVANAMPATTI
+              </text>
+
+              {/* Side Branding */}
+              <text x="125" y="79.5" fill="#0F172A" fontSize="9.5" fontWeight="900" letterSpacing="1.2" textAnchor="middle" fontFamily="sans-serif">
+                KIT TRANSIT • BUS 07
+              </text>
+
+              {/* Windows */}
+              <path d="M 210 38 L 245 42 L 245 64 L 210 64 Z" fill="#0F172A" stroke="#334155" strokeWidth="2" />
+              <rect x="168" y="38" width="36" height="26" rx="3" fill="#0F172A" stroke="#334155" strokeWidth="2" />
+              <rect x="126" y="38" width="36" height="26" rx="3" fill="#0F172A" stroke="#334155" strokeWidth="2" />
+              <rect x="84" y="38" width="36" height="26" rx="3" fill="#0F172A" stroke="#334155" strokeWidth="2" />
+              <rect x="42" y="38" width="36" height="26" rx="3" fill="#0F172A" stroke="#334155" strokeWidth="2" />
+              <rect x="22" y="38" width="16" height="26" rx="3" fill="#0F172A" stroke="#334155" strokeWidth="2" />
+
+              {/* Headlight */}
+              <path d="M 252 74 L 257 76 L 257 84 L 252 86 Z" fill="#FEF08A" />
+              <polygon points="257,75 320,50 320,110 257,85" fill="url(#headlightBeamGrad2)" />
+
+              {/* Wheels */}
+              <circle cx="68" cy="95" r="19" fill="#0F172A" />
+              <circle cx="205" cy="95" r="19" fill="#0F172A" />
+              <g className="bus-spinning-wheel">
+                <circle cx="68" cy="95" r="16" fill="#1E293B" stroke="#64748B" strokeWidth="3" />
+                <circle cx="68" cy="95" r="7" fill="#E2E8F0" />
+                <circle cx="68" cy="95" r="3" fill="#0284C7" />
+                <line x1="68" y1="82" x2="68" y2="108" stroke="#94A3B8" strokeWidth="2" />
+                <line x1="55" y1="95" x2="81" y2="95" stroke="#94A3B8" strokeWidth="2" />
+              </g>
+              <g className="bus-spinning-wheel">
+                <circle cx="205" cy="95" r="16" fill="#1E293B" stroke="#64748B" strokeWidth="3" />
+                <circle cx="205" cy="95" r="7" fill="#E2E8F0" />
+                <circle cx="205" cy="95" r="3" fill="#0284C7" />
+                <line x1="205" y1="82" x2="205" y2="108" stroke="#94A3B8" strokeWidth="2" />
+                <line x1="192" y1="95" x2="218" y2="95" stroke="#94A3B8" strokeWidth="2" />
+              </g>
+
+              <defs>
+                <linearGradient id="headlightBeamGrad2" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="rgba(56, 189, 248, 0.85)" />
+                  <stop offset="60%" stopColor="rgba(56, 189, 248, 0.3)" />
+                  <stop offset="100%" stopColor="rgba(56, 189, 248, 0)" />
                 </linearGradient>
               </defs>
             </svg>

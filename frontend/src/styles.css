@@ -434,51 +434,209 @@ body {
 .splash-road-container.tech-road-container {
   position: relative;
   width: 100%;
-  height: 180px;
+  height: 170px;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+  overflow: hidden;
 }
 
 .splash-highway.tech-highway {
   position: relative;
   width: 100%;
-  height: 100px;
-  background: #090e17;
+  height: 95px;
+  background: linear-gradient(180deg, #090e17 0%, #030712 100%);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   overflow: hidden;
-  border-top: 4px solid #1e3a8a;
-  box-shadow: inset 0 10px 30px rgba(0, 0, 0, 0.8);
+  border-top: 3px solid #1e3a8a;
+  box-shadow: inset 0 10px 30px rgba(0, 0, 0, 0.9), 0 -5px 25px rgba(37, 99, 235, 0.25);
 }
 
 .splash-neon-rail {
   width: 100%;
   height: 3px;
   background: linear-gradient(90deg, #38bdf8, #2563eb, #38bdf8);
-  box-shadow: 0 0 12px #38bdf8;
+  box-shadow: 0 0 14px #38bdf8;
 }
 
 .splash-center-stripes.tech-stripes {
   width: 100%;
   height: 4px;
-  background: repeating-linear-gradient(
+  background-image: repeating-linear-gradient(
     90deg,
     #facc15 0px,
-    #facc15 40px,
-    transparent 40px,
-    transparent 80px
+    #facc15 45px,
+    transparent 45px,
+    transparent 90px
   );
-  animation: roadStripesScroll 0.7s linear infinite;
-  box-shadow: 0 0 10px rgba(250, 204, 21, 0.6);
+  background-size: 90px 4px;
+  animation: roadStripesScroll 0.45s linear infinite;
+  box-shadow: 0 0 12px rgba(250, 204, 21, 0.7);
 }
 
+@keyframes roadStripesScroll {
+  from {
+    background-position-x: 90px;
+  }
+  to {
+    background-position-x: 0px;
+  }
+}
+
+.splash-road-reflectors {
+  position: absolute;
+  top: 4px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-around;
+  pointer-events: none;
+}
+
+.reflector {
+  width: 6px;
+  height: 4px;
+  border-radius: 2px;
+  background: #38bdf8;
+  box-shadow: 0 0 8px #38bdf8;
+}
+
+/* Speed Lines Gliding Across Road Surface */
+.splash-road-speed-lines {
+  position: absolute;
+  bottom: 30px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.3), transparent);
+  pointer-events: none;
+}
+
+/* Moving KIT College Bus Container */
 .splash-bus-traveler {
   position: absolute;
-  bottom: 18px;
-  transition: left 0.1s linear;
-  z-index: 20;
+  bottom: 8px;
+  width: 280px;
+  height: 120px;
+  z-index: 25;
+  pointer-events: none;
+}
+
+/* Primary Bus: Bus 12 Gandhipuram Express */
+.splash-bus-traveler.bus-primary-lead {
+  animation: busDriveLeftToRight 3.6s linear infinite;
+}
+
+/* Secondary Follower: Bus 07 Saravanampatti Line */
+.splash-bus-traveler.bus-secondary-follower {
+  animation: busDriveLeftToRight 3.6s linear infinite;
+  animation-delay: 1.8s;
+  left: -320px;
+}
+
+/* Core Left-to-Right Bus Driving Animation */
+@keyframes busDriveLeftToRight {
+  0% {
+    left: -320px;
+    opacity: 0.95;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    left: calc(100vw + 60px);
+    opacity: 0.95;
+  }
+}
+
+/* Bus SVG Chassis & Suspension Physics */
+.kit-bus-svg-wrapper {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.bus-bouncing-chassis {
+  animation: busChassisBounce 0.3s ease-in-out infinite alternate;
+  transform-origin: bottom center;
+}
+
+@keyframes busChassisBounce {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-2px) rotate(0.15deg);
+  }
+  100% {
+    transform: translateY(1px) rotate(-0.15deg);
+  }
+}
+
+/* Realistic Alloy Spinning Wheels */
+.bus-spinning-wheel {
+  transform-box: fill-box;
+  transform-origin: center center;
+  animation: spinBusWheel 0.35s linear infinite;
+}
+
+@keyframes spinBusWheel {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Dynamic Rear Exhaust Smoke Particles */
+.bus-exhaust-smoke {
+  position: absolute;
+  bottom: 22px;
+  left: 6px;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.smoke-puff {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(148, 163, 184, 0.6) 0%, rgba(100, 116, 139, 0) 70%);
+  filter: blur(2px);
+  animation: smokeDriftBack 0.8s ease-out infinite;
+}
+
+.smoke-puff.p1 {
+  animation-delay: 0s;
+}
+
+.smoke-puff.p2 {
+  animation-delay: 0.25s;
+}
+
+.smoke-puff.p3 {
+  animation-delay: 0.5s;
+}
+
+@keyframes smokeDriftBack {
+  0% {
+    transform: translate(0, 0) scale(0.6);
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 0.4;
+  }
+  100% {
+    transform: translate(-38px, -12px) scale(2.2);
+    opacity: 0;
+  }
 }
 
 /* =========================================================
