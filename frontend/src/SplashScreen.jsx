@@ -48,24 +48,11 @@ export default function SplashScreen({ onFinish }) {
         {/* Radar Matrix Coordinate Grid */}
         <div className="splash-radar-grid" />
 
-        {/* Floating Telemetry Streamers */}
-        <div className="splash-telemetry-streamers left-streamer">
-          <span>ZONE: COIMBATORE METRO</span>
-          <span>CAMPUS: KANNAMPALAYAM</span>
-          <span>CORRIDOR: NH-544 PEELAMEDU</span>
-        </div>
-        <div className="splash-telemetry-streamers right-streamer">
-          <span>RADIO: 433.92 MHz</span>
-          <span>FLEET: 7 BUSES ONLINE</span>
-          <span>ENCRYPTION: TLS-256</span>
-        </div>
-
-        {/* Floating Coimbatore Transit Waypoint Constellation with Interactive Energy Pulse */}
+        {/* Floating Coimbatore Transit Waypoint Constellation */}
         <div className="splash-waypoints-strip">
           <div className="wp-node wp-1">
             <span className="wp-dot" />
             <span className="wp-text">Gandhipuram</span>
-            <span className="wp-badge">Hub</span>
           </div>
           <div className="wp-line" />
           <div className="wp-node wp-2">
@@ -86,7 +73,6 @@ export default function SplashScreen({ onFinish }) {
           <div className="wp-node wp-5 active-kit">
             <span className="wp-dot kit-dot" />
             <span className="wp-text">KIT Campus</span>
-            <span className="wp-badge kit-badge">Terminal</span>
           </div>
         </div>
 
@@ -96,22 +82,13 @@ export default function SplashScreen({ onFinish }) {
         <div className="splash-glow-orb orb-center" />
       </div>
 
-      {/* 2. Centered Branding: High-Tech Glassmorphic HUD Card with Cyber-Corners */}
+      {/* 2. Centered Branding: High-Tech Glassmorphic HUD Card */}
       <div className="splash-center-content tech-card">
         {/* Cyber Corner HUD Brackets */}
         <div className="hud-corner hud-corner-tl" />
         <div className="hud-corner hud-corner-tr" />
         <div className="hud-corner hud-corner-bl" />
         <div className="hud-corner hud-corner-br" />
-
-        {/* Telemetry Corner Tags */}
-        <div className="splash-card-hud-strip">
-          <span className="hud-tag">
-            <span className="hud-pulse-dot" /> 5G DUAL-BAND GPS
-          </span>
-          <span className="hud-tag">ZONE: COIMBATORE METRO</span>
-          <span className="hud-tag">FLEET: 7 ONLINE</span>
-        </div>
 
         {/* KIT Coimbatore Logo with Rotating Gyroscopic Radar Rings */}
         <div className="splash-logo-wrap tech-logo">
@@ -130,11 +107,11 @@ export default function SplashScreen({ onFinish }) {
             KIT<span>BusMiss</span>
           </h1>
           <p className="splash-subtitle">
-            Autonomous • NAAC 'A' • Real-Time Campus Fleet Intelligence
+            Autonomous • NAAC 'A' • Campus Transit Portal
           </p>
         </div>
 
-        {/* 3. Cyber Loading Progress Bar & Subsystem Telemetry */}
+        {/* 3. Cyber Loading Progress Bar */}
         <div className="splash-loading-box">
           <div className="splash-progress-track tech-track">
             <div
@@ -147,22 +124,6 @@ export default function SplashScreen({ onFinish }) {
           <div className="splash-loading-status">
             <span className="splash-status-phrase">{getStatusText(progress)}</span>
             <b className="splash-percent-num">{progress}%</b>
-          </div>
-
-          {/* Subsystem Verification Matrix Badges */}
-          <div className="splash-subsystems-matrix">
-            <span className={`subsystem-pill ${progress >= 20 ? "active" : ""}`}>
-              <span className="subsystem-led" /> GPS: LOCKED
-            </span>
-            <span className={`subsystem-pill ${progress >= 45 ? "active" : ""}`}>
-              <span className="subsystem-led" /> RADAR: 360°
-            </span>
-            <span className={`subsystem-pill ${progress >= 70 ? "active" : ""}`}>
-              <span className="subsystem-led" /> FLEET: 7 BUSES
-            </span>
-            <span className={`subsystem-pill ${progress >= 90 ? "active" : ""}`}>
-              <span className="subsystem-led" /> SOCKET: SYNCED
-            </span>
           </div>
         </div>
       </div>
