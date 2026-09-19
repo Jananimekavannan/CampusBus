@@ -15,7 +15,7 @@ export default function SplashScreen({ onFinish }) {
 
   // Dynamic real-time subsystem loading telemetry
   const getStatusText = (p) => {
-    if (p < 20) return "🛰️ Calibrating GPS Dual-Band Satellites (10.9922°N, 77.0864°E)...";
+    if (p < 20) return "🚍 Initializing Campus Transit & Live GPS (10.9922°N, 77.0864°E)...";
     if (p < 40) return "🗺️ Mapping 7 Coimbatore Transit Corridors & 38 Stops...";
     if (p < 65) return "🚍 Linking Active KIT College Fleet Telemetry & Speed Sensors...";
     if (p < 85) return "⚡ Synchronizing Real-Time Student & Driver WebSockets...";
@@ -44,19 +44,6 @@ export default function SplashScreen({ onFinish }) {
       <div className="splash-tech-bg">
         {/* Radar Matrix Coordinate Grid */}
         <div className="splash-radar-grid" />
-
-        {/* Orbiting GPS Satellites */}
-        <div className="splash-gps-satellite sat-1">
-          <div className="sat-icon">🛰️</div>
-          <span className="sat-label">KIT-GPS-SAT-01</span>
-          <div className="sat-ping-ring" />
-        </div>
-
-        <div className="splash-gps-satellite sat-2">
-          <div className="sat-icon">🛰️</div>
-          <span className="sat-label">COIMBATORE-GEO-02</span>
-          <div className="sat-ping-ring" />
-        </div>
 
         {/* Floating Coimbatore Transit Waypoint Constellation */}
         <div className="splash-waypoints-strip">
